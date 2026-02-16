@@ -323,71 +323,92 @@ function sanitizeObject(obj: any): any {
 // ═══════════════════════════════════════
 
 export async function saveBlocks(pageId: string, blocks: any[], themeId?: string) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      console.error("Save blocks unauthorized: No session or user ID", { session });
+      throw new Error("Unauthorized");
+    }
 
-  // Rate limiting: 10 saves per minute
-  const isAllowed = rateLimit(`save_${session.user.id}`, 10, 60000);
-  if (!isAllowed) throw new Error("Too many requests. Please wait a minute.");
+    // Rate limiting: 20 saves per minute (increased for better UX)
+    const isAllowed = rateLimit(`save_${session.user.id}`, 20, 60000);
+    if (!isAllowed) throw new Error("Too many requests. Please wait a minute.");
 
-  // Validation
-  const validated = saveBlocksSchema.safeParse({ pageId, blocks, themeId });
-  if (!validated.success) {
-    console.error("Validation error:", validated.error);
-    throw new Error("Invalid block data");
+    // Validation
+    const validated = saveBlocksSchema.safeParse({ pageId, blocks, themeId });
+    if (!validated.success) {
+      console.error("Validation error:", JSON.stringify(validated.error.format(), null, 2));
+      throw new Error("Invalid block data: " + validated.error.errors[0].message);
+    }
+
+    const { blocks: validatedBlocks, themeId: validatedThemeId } = validated.data;
+
+    // Sanitization
+    const sanitizedBlocks = validatedBlocks.map(block => ({
+      ...block,
+      content: sanitizeObject(block.content)
+    }));
+
+    // Verify ownership
+    const page = await prisma.page.findUnique({
+      where: { id: pageId, userId: session.user.id }
+    });
+
+    if (!page) throw new Error("Page not found or unauthorized");
+
+    // Simple implementation: delete all and recreate
+    await prisma.$transaction([
+      prisma.page.update({
+        where: { id: pageId },
+        data: { themeId: validatedThemeId || "creator" }
+      }),
+      prisma.block.deleteMany({ where: { pageId } }),
+      prisma.block.createMany({
+        data: sanitizedBlocks.map((block, index) => ({
+          // If it's a new block (random id from client), let Prisma generate a CUID
+          id: (block.id.includes('-') && !block.id.startsWith('initial')) || block.id.length < 5 ? undefined : block.id,
+          pageId,
+          type: block.type.toUpperCase().replace('-', '_'),
+          content: JSON.stringify(block.content),
+          sortOrder: index,
+        }))
+      })
+    ]);
+
+    revalidatePath(`/editor/${pageId}`);
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (user) revalidatePath(`/${user.username}`);
+    
+    return { success: true };
+  } catch (error: any) {
+    console.error("Save blocks error:", error);
+    throw new Error(error.message || "Failed to save changes");
   }
-
-  const { blocks: validatedBlocks, themeId: validatedThemeId } = validated.data;
-
-  // Sanitization
-  const sanitizedBlocks = validatedBlocks.map(block => ({
-    ...block,
-    content: sanitizeObject(block.content)
-  }));
-
-  // Verify ownership
-  const page = await prisma.page.findUnique({
-    where: { id: pageId, userId: session.user.id }
-  });
-
-  if (!page) throw new Error("Page not found");
-
-  // Simple implementation: delete all and recreate
-  await prisma.$transaction([
-    prisma.page.update({
-      where: { id: pageId },
-      data: { themeId: validatedThemeId || "creator" }
-    }),
-    prisma.block.deleteMany({ where: { pageId } }),
-    prisma.block.createMany({
-      data: sanitizedBlocks.map((block, index) => ({
-        id: block.id.startsWith('initial') || block.id.length < 5 ? undefined : block.id,
-        pageId,
-        type: block.type.toUpperCase().replace('-', '_'),
-        content: JSON.stringify(block.content),
-        sortOrder: index,
-      }))
-    })
-  ]);
-
-  revalidatePath(`/editor/${pageId}`);
-  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
-  if (user) revalidatePath(`/${user.username}`);
 }
 
 export async function publishPage(pageId: string, published: boolean) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Unauthorized");
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      console.error("Publish page unauthorized: No session or user ID", { session });
+      throw new Error("Unauthorized");
+    }
 
-  await prisma.page.update({
-    where: { id: pageId, userId: session.user.id },
-    data: { published }
-  });
+    await prisma.page.update({
+      where: { id: pageId, userId: session.user.id },
+      data: { published }
+    });
 
-  revalidatePath("/dashboard");
-  revalidatePath(`/editor/${pageId}`);
-  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
-  if (user) revalidatePath(`/${user.username}`);
+    revalidatePath("/dashboard");
+    revalidatePath(`/editor/${pageId}`);
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (user) revalidatePath(`/${user.username}`);
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Publish page error:", error);
+    throw new Error(error.message || "Failed to update published status");
+  }
 }
 
 // ═══════════════════════════════════════
