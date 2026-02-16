@@ -43,9 +43,13 @@ COPY --from=build /app/public ./public
 COPY --from=build --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=build --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Explicitly copy Prisma schema and engines for standalone mode
+# Copy Prisma and dependencies for the startup script
 COPY --from=build --chown=nextjs:nodejs /app/prisma ./prisma
-COPY --from=build --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=build --chown=nextjs:nodejs /app/node_modules ./node_modules
+
+# Copy startup script
+COPY --from=build --chown=nextjs:nodejs /app/start.sh ./start.sh
+RUN chmod +x ./start.sh
 
 USER nextjs
 
@@ -54,4 +58,4 @@ EXPOSE 80
 ENV PORT 80
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["node", "server.js"]
+CMD ["sh", "./start.sh"]
