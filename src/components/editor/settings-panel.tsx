@@ -257,20 +257,6 @@ export function SettingsPanel() {
   );
 }
 
-      <div className="p-6 border-t border-slate-100 bg-slate-50/50 mt-auto">
-        <Button 
-          variant="ghost" 
-          onClick={() => removeBlock(selectedBlock.id)}
-          className="w-full py-6 flex items-center justify-center gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 font-bold rounded-xl transition-all"
-        >
-          <Trash2 className="w-4 h-4" />
-          Delete Block
-        </Button>
-      </div>
-    </aside>
-  );
-}
-
 function Settings({ className }: { className?: string }) {
   return (
     <svg
