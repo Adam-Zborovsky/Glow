@@ -16,7 +16,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signOut } from "next-auth/react";
 
-export function DashboardNav() {
+interface DashboardNavProps {
+  user?: any;
+}
+
+export function DashboardNav({ user }: DashboardNavProps) {
   const pathname = usePathname();
 
   const navLinks = [
@@ -24,6 +28,10 @@ export function DashboardNav() {
     { name: "Analytics", href: "/analytics" },
     { name: "Settings", href: "/settings" },
   ];
+
+  const userInitials = user?.name
+    ? user.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()
+    : user?.email?.[0].toUpperCase() || "U";
 
   return (
     <nav className="sticky top-0 z-50 h-16 bg-white border-b border-slate-200 px-6">
@@ -78,13 +86,18 @@ export function DashboardNav() {
             <DropdownMenuTrigger asChild>
               <button className="outline-none">
                 <Avatar className="w-8 h-8 border border-slate-200 hover:opacity-80 transition-opacity">
-                  <AvatarImage src="https://i.pravatar.cc/150?u=sarah" />
-                  <AvatarFallback>SC</AvatarFallback>
+                  <AvatarImage src={user?.image || `https://i.pravatar.cc/150?u=${user?.email}`} />
+                  <AvatarFallback>{userInitials}</AvatarFallback>
                 </Avatar>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 mt-2">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{user?.name || user?.username}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                </div>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link href="/settings">Settings</Link>

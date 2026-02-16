@@ -3,11 +3,14 @@ import { Hero } from "@/components/marketing/hero";
 import { Features } from "@/components/marketing/features";
 import { Templates } from "@/components/marketing/templates";
 import { Pricing } from "@/components/marketing/pricing";
+import { auth } from "@/lib/auth";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
   return (
     <div className="min-h-screen mesh-gradient-bg selection:bg-violet-100 selection:text-violet-900">
-      <Navbar />
+      <Navbar user={session?.user} />
       <main>
         <Hero />
         <Features />

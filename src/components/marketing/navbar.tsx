@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-export function Navbar() {
+interface NavbarProps {
+  user?: {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  };
+}
+
+export function Navbar({ user }: NavbarProps) {
   return (
     <nav className="fixed top-0 left-0 right-0 h-16 z-50 glass-card flex items-center px-8 lg:px-16 justify-between">
       <div className="flex items-center gap-2">
@@ -26,12 +34,20 @@ export function Navbar() {
         </Link>
       </div>
       <div className="flex items-center gap-6">
-        <Button variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" asChild>
-          <Link href="/login">Log In</Link>
-        </Button>
-        <Button className="primary-gradient text-white text-sm font-semibold px-6 py-2.5 rounded-full glow-shadow hover:scale-105 transition-all border-none" asChild>
-          <Link href="/signup">Get Started Free</Link>
-        </Button>
+        {user ? (
+          <Button className="primary-gradient text-white text-sm font-semibold px-6 py-2.5 rounded-full glow-shadow hover:scale-105 transition-all border-none" asChild>
+            <Link href="/dashboard">Dashboard</Link>
+          </Button>
+        ) : (
+          <>
+            <Button variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" asChild>
+              <Link href="/login">Log In</Link>
+            </Button>
+            <Button className="primary-gradient text-white text-sm font-semibold px-6 py-2.5 rounded-full glow-shadow hover:scale-105 transition-all border-none" asChild>
+              <Link href="/signup">Get Started Free</Link>
+            </Button>
+          </>
+        )}
       </div>
     </nav>
   );

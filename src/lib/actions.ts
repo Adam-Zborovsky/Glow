@@ -41,44 +41,57 @@ export async function register(prevState: any, formData: FormData) {
         email,
         username,
         passwordHash,
+        name: username, // Default name to username
         // Create an initial page for the user
         pages: {
           create: {
             slug: "main",
             title: `${username}'s Page`,
-                      blocks: {
-                        create: [
-                          {
-                            type: "BIO",
-                            sortOrder: 0,
-                            content: JSON.stringify({
-                              name: username,
-                              title: "Digital Creator",
-                              bio: "Welcome to my page!",
-                              alignment: "center",
-                            }),
-                          },
-                        ],
-                      },          }
+            blocks: {
+              create: [
+                {
+                  type: "BIO",
+                  sortOrder: 0,
+                  content: JSON.stringify({
+                    name: username,
+                    title: "Digital Creator",
+                    bio: "Welcome to my page!",
+                    alignment: "center",
+                  }),
+                },
+              ],
+            },
+          }
         }
       }
     });
-  } catch (error) {
-    console.error("Registration error:", error);
-    return { error: "Something went wrong" };
-  }
 
-  // Automatically sign in after registration
-  await signIn("credentials", {
-    email,
-    password,
-    redirectTo: "/dashboard",
-  });
+    // Automatically sign in after registration
+    await signIn("credentials", {
+      email,
+      password,
+      redirectTo: "/dashboard",
+    });
+  } catch (error) {
+    if ((error as any).type === "CredentialsSignin") {
+      return { error: "Invalid credentials during auto-login" };
+    }
+    // Auth.js redirects by throwing a special error, we must rethrow it
+    if ((error as any).message === "NEXT_REDIRECT" || (error as any).digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("Registration error:", error);
+    return { error: "Something went wrong during registration" };
+  }
 }
 
 export async function login(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+
+  if (!email || !password) {
+    return { error: "Missing email or password" };
+  }
 
   try {
     await signIn("credentials", {
@@ -88,9 +101,14 @@ export async function login(prevState: any, formData: FormData) {
     });
   } catch (error) {
     if ((error as any).type === "CredentialsSignin") {
-      return { error: "Invalid credentials" };
+      return { error: "Invalid email or password" };
     }
-    throw error;
+    // Auth.js redirects by throwing a special error, we must rethrow it
+    if ((error as any).message === "NEXT_REDIRECT" || (error as any).digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("Login error:", error);
+    return { error: "An unexpected error occurred" };
   }
 }
 
