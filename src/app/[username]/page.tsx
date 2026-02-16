@@ -2,6 +2,7 @@ import { PageRenderer } from "@/components/published/page-renderer";
 import { notFound } from "next/navigation";
 import { getPublicPage, recordPageView } from "@/lib/actions";
 import { Metadata } from "next";
+import { logger } from "@/lib/logger";
 
 export async function generateMetadata({ params }: { params: Promise<{ username: string }> }): Promise<Metadata> {
   const { username } = await params;
@@ -37,7 +38,7 @@ export default async function PublishedPage({ params }: { params: Promise<{ user
   }
 
   // Record view in background
-  recordPageView(data.page.id, data.page.userId).catch(console.error);
+  recordPageView(data.page.id, data.page.userId).catch(logger.error);
 
   const formattedBlocks = data.page.blocks.map(b => ({
     id: b.id,

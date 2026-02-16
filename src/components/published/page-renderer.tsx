@@ -14,6 +14,7 @@ import {
   Play
 } from "lucide-react";
 import { recordBlockClick } from "@/lib/actions";
+import { logger } from "@/lib/logger";
 
 interface PublishedPageProps {
   username: string;
@@ -34,7 +35,7 @@ export function PageRenderer({ username, template, blocks, user }: PublishedPage
   );
 
   const handleBlockClick = async (blockId: string, url?: string) => {
-    recordBlockClick(blockId).catch(console.error);
+    recordBlockClick(blockId).catch(logger.error);
     if (url) {
       // In a real app, we might want to wait a few ms or use a beacon
       window.open(url, '_blank', 'noopener,noreferrer');

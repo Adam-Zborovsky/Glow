@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "clean": "node -e \"const fs=require('fs'); ['.next', 'dev.db', 'prisma/dev.db'].forEach(p => fs.rmSync(p, { recursive: true, force: true }))\"",
+    "prebuild": "npm run clean"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",

@@ -8,6 +8,7 @@ import { headers } from "next/headers";
 import bcrypt from "bcryptjs";
 import { saveBlocksSchema, updatePageMetadataSchema } from "./validation";
 import { rateLimit } from "./rate-limit";
+import { logger } from "./logger";
 
 // ═══════════════════════════════════════
 // AUTH ACTIONS
@@ -86,7 +87,7 @@ export async function register(prevState: any, formData: FormData) {
     if ((error as any).message === "NEXT_REDIRECT" || (error as any).digest?.startsWith("NEXT_REDIRECT")) {
       throw error;
     }
-    console.error("Registration error:", error);
+    logger.error("Registration error:", error);
     return { error: "Something went wrong during registration" };
   }
 }
@@ -117,7 +118,7 @@ export async function login(prevState: any, formData: FormData) {
     if ((error as any).message === "NEXT_REDIRECT" || (error as any).digest?.startsWith("NEXT_REDIRECT")) {
       throw error;
     }
-    console.error("Login error:", error);
+    logger.error("Login error:", error);
     return { error: "An unexpected error occurred" };
   }
 }
@@ -133,6 +134,12 @@ export async function login(prevState: any, formData: FormData) {
 
 export async function recordPageView(pageId: string, userId: string) {
   const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for") || "unknown";
+  
+  // Rate limit: 60 views per minute per IP
+  const isAllowed = rateLimit(`view_${ip}_${pageId}`, 60, 60000);
+  if (!isAllowed) return;
+
   const userAgent = headersList.get("user-agent") || "";
   const referrer = headersList.get("referer") || "direct";
   
@@ -154,6 +161,12 @@ export async function recordPageView(pageId: string, userId: string) {
 
 export async function recordBlockClick(blockId: string, url?: string) {
   const headersList = await headers();
+  const ip = headersList.get("x-forwarded-for") || "unknown";
+
+  // Rate limit: 100 clicks per minute per IP
+  const isAllowed = rateLimit(`click_${ip}_${blockId}`, 100, 60000);
+  if (!isAllowed) return;
+
   const userAgent = headersList.get("user-agent") || "";
   const referrer = headersList.get("referer") || "direct";
 
@@ -378,7 +391,7 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      console.error("Save blocks unauthorized: No session or user ID", { session });
+      logger.error("Save blocks unauthorized: No session or user ID");
       throw new Error("Unauthorized");
     }
 
@@ -389,8 +402,8 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
     // Validation
     const validated = saveBlocksSchema.safeParse({ pageId, blocks, themeId });
     if (!validated.success) {
-      console.error("Validation error:", JSON.stringify(validated.error.format(), null, 2));
-      throw new Error("Invalid block data: " + validated.error.message);
+      logger.error("Validation error:", JSON.stringify(validated.error.format(), null, 2));
+      throw new Error("Invalid block data");
     }
 
     const { blocks: validatedBlocks, themeId: validatedThemeId } = validated.data;
@@ -407,7 +420,7 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
     });
 
     if (!page) {
-      console.error("Save blocks: Page not found or unauthorized", { pageId, userId: session.user.id });
+      logger.error("Save blocks: Page not found or unauthorized", { pageId, userId: session.user.id });
       throw new Error("Page not found or unauthorized");
     }
 
@@ -440,8 +453,8 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
     
     return { success: true };
   } catch (error: any) {
-    console.error("Save blocks error:", error);
-    return { error: error.message || "Failed to save changes" };
+    logger.error("Save blocks error:", error);
+    return { error: "Failed to save changes" };
   }
 }
 
@@ -449,7 +462,7 @@ export async function publishPage(pageId: string, published: boolean) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      console.error("Publish page unauthorized: No session or user ID", { session });
+      logger.error("Publish page unauthorized: No session or user ID");
       throw new Error("Unauthorized");
     }
 
@@ -459,7 +472,7 @@ export async function publishPage(pageId: string, published: boolean) {
     });
 
     if (!page) {
-      console.error("Publish page: Page not found or unauthorized", { pageId, userId: session.user.id });
+      logger.error("Publish page: Page not found or unauthorized", { pageId, userId: session.user.id });
       throw new Error("Page not found or unauthorized");
     }
 
@@ -475,8 +488,8 @@ export async function publishPage(pageId: string, published: boolean) {
 
     return { success: true };
   } catch (error: any) {
-    console.error("Publish page error:", error);
-    return { error: error.message || "Failed to update published status" };
+    logger.error("Publish page error:", error);
+    return { error: "Failed to update published status" };
   }
 }
 
@@ -484,14 +497,14 @@ export async function updatePageMetadata(pageId: string, title: string, seoTitle
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      console.error("Update metadata unauthorized: No session or user ID", { session });
+      logger.error("Update metadata unauthorized: No session or user ID");
       throw new Error("Unauthorized");
     }
 
     const validated = updatePageMetadataSchema.safeParse({ pageId, title, seoTitle, seoDesc });
     if (!validated.success) {
-      console.error("Validation error:", JSON.stringify(validated.error.format(), null, 2));
-      throw new Error("Invalid metadata: " + validated.error.message);
+      logger.error("Validation error:", JSON.stringify(validated.error.format(), null, 2));
+      throw new Error("Invalid metadata");
     }
 
     const page = await prisma.page.findFirst({
@@ -499,7 +512,7 @@ export async function updatePageMetadata(pageId: string, title: string, seoTitle
     });
 
     if (!page) {
-      console.error("Update metadata: Page not found or unauthorized", { pageId, userId: session.user.id });
+      logger.error("Update metadata: Page not found or unauthorized", { pageId, userId: session.user.id });
       throw new Error("Page not found or unauthorized");
     }
 
@@ -516,8 +529,8 @@ export async function updatePageMetadata(pageId: string, title: string, seoTitle
     revalidatePath(`/editor/${pageId}`);
     return { success: true };
   } catch (error: any) {
-    console.error("Update metadata error:", error);
-    return { error: error.message || "Failed to update page metadata" };
+    logger.error("Update metadata error:", error);
+    return { error: "Failed to update page metadata" };
   }
 }
 

@@ -9,6 +9,7 @@ import { saveBlocks, publishPage } from "@/lib/actions";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { logger } from "@/lib/logger";
 
 export function EditorNav({ initialPublished = false }: { initialPublished?: boolean }) {
   const { blocks, themeId, deviceView, setDeviceView, setIsPreviewOpen } = useEditorStore();
@@ -26,7 +27,7 @@ export function EditorNav({ initialPublished = false }: { initialPublished?: boo
         alert(result.error);
       }
     } catch (error) {
-      console.error("Failed to save:", error);
+      logger.error("Failed to save:", error);
       alert("An unexpected error occurred while saving.");
     } finally {
       setIsSaving(false);
@@ -50,7 +51,7 @@ export function EditorNav({ initialPublished = false }: { initialPublished?: boo
         setIsPublished(!isPublished);
       }
     } catch (error) {
-      console.error("Failed to publish:", error);
+      logger.error("Failed to publish:", error);
       alert("An unexpected error occurred while publishing.");
     } finally {
       setIsPublishing(false);

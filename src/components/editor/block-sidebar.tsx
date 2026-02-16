@@ -20,6 +20,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { updatePageMetadata } from "@/lib/actions";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 const availableBlocks: { type: BlockType; label: string; icon: any }[] = [
   { type: 'bio', label: 'Bio Block', icon: User },
@@ -48,7 +49,7 @@ export function BlockSidebar() {
         // success toast or feedback could go here
       }
     } catch (error) {
-      console.error("Failed to update settings:", error);
+      logger.error("Failed to update settings:", error);
       alert("Failed to update settings");
     } finally {
       setIsSaving(false);

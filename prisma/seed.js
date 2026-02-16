@@ -4,6 +4,11 @@ const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function main() {
+  if (process.env.NODE_ENV === 'production' && !process.env.FORCE_SEED) {
+    console.warn('Skipping seed in production. Use FORCE_SEED=true to override.');
+    return;
+  }
+
   const passwordHash = await bcrypt.hash('password123', 10);
 
   // Create User 1: Adam
