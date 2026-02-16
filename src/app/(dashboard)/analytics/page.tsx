@@ -6,10 +6,19 @@ import {
   Globe, 
   Smartphone, 
   Monitor, 
-  Tablet 
+  Tablet,
+  ChevronDown,
+  Calendar
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 export default async function AnalyticsPage() {
   const data = await getAnalyticsSummary();
@@ -25,9 +34,22 @@ export default async function AnalyticsPage() {
     <main className="max-w-7xl mx-auto pt-12 pb-24 px-6">
       <div className="flex items-center justify-between mb-10">
         <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Analytics</h1>
-        <div className="bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm font-medium text-slate-600 shadow-sm">
-          Last 30 Days
-        </div>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="bg-white border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-slate-600 shadow-sm h-auto flex items-center gap-2 hover:bg-slate-50 transition-all">
+              <Calendar className="w-4 h-4 text-slate-400" />
+              <span>Last 30 Days</span>
+              <ChevronDown className="w-4 h-4 text-slate-400" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem className="font-medium">Last 7 Days</DropdownMenuItem>
+            <DropdownMenuItem className="font-medium">Last 30 Days</DropdownMenuItem>
+            <DropdownMenuItem className="font-medium">Last 90 Days</DropdownMenuItem>
+            <DropdownMenuItem className="font-medium">All Time</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Stats Grid */}

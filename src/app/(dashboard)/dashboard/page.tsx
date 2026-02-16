@@ -8,15 +8,20 @@ import {
   Plus, 
   TrendingUp, 
   MousePointer2, 
-  Users, 
+  Users,
+  Edit,
+  Trash2,
+  CopyPlus,
 } from "lucide-react";
 import Link from "next/link";
 import { getPages, createPage } from "@/lib/actions";
 import { auth } from "@/lib/auth";
+import { PageCardDropdown } from "@/components/dashboard/page-card-dropdown";
 
 export default async function DashboardPage() {
   const session = await auth();
   const pages = await getPages();
+  const username = (session?.user as any)?.username;
 
   const stats = [
     { label: "Page Views", value: pages.reduce((acc, p) => acc + (p as any)._count.views, 0).toLocaleString(), trend: "+12%", icon: Eye },
@@ -101,9 +106,11 @@ export default async function DashboardPage() {
                       </Badge>
                     )}
                   </div>
-                  <button className="text-slate-400 hover:text-slate-600 transition-colors">
-                    <MoreHorizontal className="w-5 h-5" />
-                  </button>
+                  <PageCardDropdown 
+                    pageId={page.id} 
+                    slug={page.slug} 
+                    username={username} 
+                  />
                 </div>
                 
                 <p className="font-mono text-xs text-slate-400">glow.page/{(session?.user as any)?.username}/{page.slug === 'main' ? '' : page.slug}</p>

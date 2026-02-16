@@ -77,14 +77,29 @@ export function DashboardNav({ user }: DashboardNavProps) {
             />
           </div>
           
-          <button className="text-slate-500 hover:text-slate-900 relative p-2 rounded-full hover:bg-slate-100 transition-colors">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button type="button" className="text-slate-500 hover:text-slate-900 relative p-2 rounded-full hover:bg-slate-100 transition-colors outline-none">
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80 mt-2">
+              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <div className="p-4 text-center">
+                <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Bell className="w-6 h-6 text-slate-300" />
+                </div>
+                <p className="text-sm font-bold text-slate-900">All caught up!</p>
+                <p className="text-xs text-slate-400 mt-1">You don't have any new notifications right now.</p>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="outline-none">
+              <button type="button" className="outline-none">
                 <Avatar className="w-8 h-8 border border-slate-200 hover:opacity-80 transition-opacity">
                   <AvatarImage src={user?.image || `https://i.pravatar.cc/150?u=${user?.email}`} />
                   <AvatarFallback>{userInitials}</AvatarFallback>

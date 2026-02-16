@@ -248,6 +248,58 @@ export async function createPage() {
   redirect(`/editor/${page.id}`);
 }
 
+export async function deletePage(pageId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  await prisma.page.delete({
+    where: { 
+      id: pageId,
+      userId: session.user.id
+    }
+  });
+
+  revalidatePath("/dashboard");
+}
+
+export async function duplicatePage(pageId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const page = await prisma.page.findFirst({
+    where: { 
+      id: pageId,
+      userId: session.user.id
+    },
+    include: {
+      blocks: true
+    }
+  });
+
+  if (!page) throw new Error("Page not found");
+
+  const newPage = await prisma.page.create({
+    data: {
+      userId: session.user.id,
+      title: `${page.title} (Copy)`,
+      slug: `${page.slug}-${Math.random().toString(36).substr(2, 5)}`,
+      themeId: page.themeId,
+      published: false,
+      blocks: {
+        create: page.blocks.map(block => ({
+          type: block.type,
+          content: block.content,
+          sortOrder: block.sortOrder,
+          visible: block.visible
+        }))
+      }
+    }
+  });
+
+  revalidatePath("/dashboard");
+  return newPage;
+}
+
 export async function getPages() {
   const session = await auth();
   if (!session?.user?.id) return [];
