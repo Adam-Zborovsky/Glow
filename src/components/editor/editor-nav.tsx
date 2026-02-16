@@ -5,13 +5,16 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Smartphone, Tablet, Monitor, Eye, Save, Loader2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useEditorStore } from "@/stores/editor-store";
-import { saveBlocks } from "@/lib/actions";
+import { saveBlocks, publishPage } from "@/lib/actions";
 import { useState } from "react";
 import { useParams } from "next/navigation";
+import { cn } from "@/lib/utils";
 
-export function EditorNav() {
+export function EditorNav({ initialPublished = false }: { initialPublished?: boolean }) {
   const { blocks, themeId } = useEditorStore();
   const [isSaving, setIsSaving] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [isPublished, setIsPublished] = useState(initialPublished);
   const params = useParams();
   const pageId = params.pageId as string;
 
@@ -26,6 +29,21 @@ export function EditorNav() {
     }
   };
 
+  const handlePublish = async () => {
+    setIsPublishing(true);
+    try {
+      // First save current changes
+      await saveBlocks(pageId, blocks, themeId);
+      // Then toggle published status
+      await publishPage(pageId, !isPublished);
+      setIsPublished(!isPublished);
+    } catch (error) {
+      console.error("Failed to publish:", error);
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   return (
     <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 z-50">
       <div className="flex items-center gap-4">
@@ -37,10 +55,10 @@ export function EditorNav() {
         <div className="flex flex-col">
           <h1 className="font-bold text-sm tracking-tight leading-none">Main Bio</h1>
           <div className="flex items-center gap-1.5 mt-1">
-            {isSaving ? (
+            {isSaving || isPublishing ? (
               <span className="text-[10px] text-slate-400 flex items-center gap-1">
                 <Loader2 className="w-2.5 h-2.5 animate-spin" />
-                Saving...
+                {isSaving ? "Saving..." : "Publishing..."}
               </span>
             ) : (
               <span className="text-[10px] text-emerald-500 font-medium">All changes saved</span>
@@ -84,7 +102,7 @@ export function EditorNav() {
           size="sm" 
           className="gap-2 h-9"
           onClick={handleSave}
-          disabled={isSaving}
+          disabled={isSaving || isPublishing}
         >
           {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           Save
@@ -93,8 +111,17 @@ export function EditorNav() {
           <Eye className="w-4 h-4" />
           Preview
         </Button>
-        <Button size="sm" className="primary-gradient text-white glow-shadow border-none font-bold h-9 px-5">
-          Publish
+        <Button 
+          size="sm" 
+          className={cn(
+            "text-white glow-shadow border-none font-bold h-9 px-5",
+            isPublished ? "bg-slate-900" : "primary-gradient"
+          )}
+          onClick={handlePublish}
+          disabled={isPublishing}
+        >
+          {isPublishing && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+          {isPublished ? "Unpublish" : "Publish"}
         </Button>
       </div>
     </header>

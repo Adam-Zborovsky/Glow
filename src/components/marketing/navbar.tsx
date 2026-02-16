@@ -26,11 +26,11 @@ export function Navbar() {
         </Link>
       </div>
       <div className="flex items-center gap-6">
-        <Button variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-          Log In
+        <Button variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors" asChild>
+          <Link href="/login">Log In</Link>
         </Button>
-        <Button className="primary-gradient text-white text-sm font-semibold px-6 py-2.5 rounded-full glow-shadow hover:scale-105 transition-all border-none">
-          Get Started Free
+        <Button className="primary-gradient text-white text-sm font-semibold px-6 py-2.5 rounded-full glow-shadow hover:scale-105 transition-all border-none" asChild>
+          <Link href="/signup">Get Started Free</Link>
         </Button>
       </div>
     </nav>

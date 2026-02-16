@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const categories = ["All", "Creator", "Professional", "Artist", "Minimal", "Dark"];
 
@@ -93,8 +94,8 @@ export function Templates() {
                 </div>
                 
                 <div className="relative z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button className="primary-gradient text-white font-semibold rounded-xl px-8 shadow-lg">
-                    Use Template
+                  <Button className="primary-gradient text-white font-semibold rounded-xl px-8 shadow-lg" asChild>
+                    <Link href="/signup">Use Template</Link>
                   </Button>
                 </div>
               </div>

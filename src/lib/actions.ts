@@ -1,11 +1,94 @@
 "use server";
 
 import { prisma } from "@/lib/db";
-import { auth } from "@/lib/auth";
+import { auth, signIn } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { BlockType } from "@/stores/editor-store";
 import { headers } from "next/headers";
+import bcrypt from "bcryptjs";
+
+// ═══════════════════════════════════════
+// AUTH ACTIONS
+// ═══════════════════════════════════════
+
+export async function register(formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const username = formData.get("username") as string;
+
+  if (!email || !password || !username) {
+    throw new Error("Missing required fields");
+  }
+
+  const existingUser = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { email },
+        { username }
+      ]
+    }
+  });
+
+  if (existingUser) {
+    throw new Error("User with this email or username already exists");
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  const user = await prisma.user.create({
+    data: {
+      email,
+      username,
+      passwordHash,
+      // Create an initial page for the user
+      pages: {
+        create: {
+          slug: "main",
+          title: `${username}'s Page`,
+          blocks: {
+            create: [
+              {
+                type: "BIO",
+                sortOrder: 0,
+                content: {
+                  name: username,
+                  title: "Digital Creator",
+                  bio: "Welcome to my page!",
+                  alignment: "center",
+                },
+              },
+            ],
+          },
+        }
+      }
+    }
+  });
+
+  // Automatically sign in after registration
+  await signIn("credentials", {
+    email,
+    password,
+    redirectTo: "/dashboard",
+  });
+}
+
+export async function login(formData: FormData) {
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+  try {
+    await signIn("credentials", {
+      email,
+      password,
+      redirectTo: "/dashboard",
+    });
+  } catch (error) {
+    if ((error as any).type === "CredentialsSignin") {
+      return { error: "Invalid credentials" };
+    }
+    throw error;
+  }
+}
 
 // ═══════════════════════════════════════
 // PAGE ACTIONS
@@ -31,7 +114,7 @@ export async function recordPageView(pageId: string, userId: string) {
       pageId,
       userId,
       referrer,
-      device,
+      device: device as string,
       browser: userAgent.split(" ")[0], // Simplified
     }
   });
@@ -50,7 +133,7 @@ export async function recordBlockClick(blockId: string) {
     data: {
       blockId,
       referrer,
-      device,
+      device: device as string,
     }
   });
 }
@@ -196,7 +279,7 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
       data: blocks.map((block, index) => ({
         id: block.id.startsWith('initial') ? undefined : block.id,
         pageId,
-        type: block.type.toUpperCase().replace('-', '_') as any,
+        type: block.type.toUpperCase().replace('-', '_'),
         content: block.content,
         sortOrder: index,
       }))
@@ -205,6 +288,21 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
 
   revalidatePath(`/editor/${pageId}`);
   revalidatePath(`/${session.user.username}`);
+}
+
+export async function publishPage(pageId: string, published: boolean) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  await prisma.page.update({
+    where: { id: pageId, userId: session.user.id },
+    data: { published }
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/editor/${pageId}`);
+  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+  if (user) revalidatePath(`/${user.username}`);
 }
 
 // ═══════════════════════════════════════

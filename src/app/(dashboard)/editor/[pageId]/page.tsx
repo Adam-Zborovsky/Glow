@@ -17,7 +17,7 @@ export default async function EditorPage({ params }: { params: Promise<{ pageId:
   return (
     <div className="h-screen overflow-hidden flex flex-col bg-white text-slate-900 font-sans">
       <HydrateEditor blocks={page.blocks} themeId={page.themeId} />
-      <EditorNav />
+      <EditorNav initialPublished={page.published} />
       <div className="flex flex-1 overflow-hidden">
         <BlockSidebar />
         <EditorCanvas />

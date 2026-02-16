@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Github, Chrome as Google, Sparkles } from "lucide-react";
+import { login } from "@/lib/actions";
 
 export default function LoginPage() {
   return (
@@ -65,19 +66,19 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" action={login}>
             <div className="space-y-2">
               <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Email Address</Label>
-              <Input type="email" placeholder="you@example.com" className="h-12 bg-slate-50 border-slate-200 rounded-xl" />
+              <Input name="email" type="email" required placeholder="you@example.com" className="h-12 bg-slate-50 border-slate-200 rounded-xl" />
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
                 <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Password</Label>
                 <Link href="#" className="text-xs font-bold text-primary hover:underline">Forgot?</Link>
               </div>
-              <Input type="password" placeholder="••••••••" className="h-12 bg-slate-50 border-slate-200 rounded-xl" />
+              <Input name="password" type="password" required placeholder="••••••••" className="h-12 bg-slate-50 border-slate-200 rounded-xl" />
             </div>
-            <Button className="w-full h-12 primary-gradient text-white font-bold rounded-xl glow-shadow border-none">
+            <Button type="submit" className="w-full h-12 primary-gradient text-white font-bold rounded-xl glow-shadow border-none">
               Log In
             </Button>
           </form>

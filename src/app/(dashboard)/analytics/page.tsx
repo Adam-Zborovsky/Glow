@@ -9,6 +9,7 @@ import {
   Tablet 
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export default async function AnalyticsPage() {
   const data = await getAnalyticsSummary();
@@ -119,8 +120,4 @@ export default async function AnalyticsPage() {
       </div>
     </main>
   );
-}
-
-function cn(...inputs: any[]) {
-  return inputs.filter(Boolean).join(" ");
 }

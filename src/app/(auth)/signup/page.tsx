@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Github, Chrome as Google, Sparkles } from "lucide-react";
+import { register } from "@/lib/actions";
 
 export default function SignupPage() {
   return (
@@ -64,23 +65,23 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" action={register}>
             <div className="space-y-2">
               <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Email Address</Label>
-              <Input type="email" placeholder="you@example.com" className="h-12 bg-slate-50 border-slate-200 rounded-xl" />
+              <Input name="email" type="email" required placeholder="you@example.com" className="h-12 bg-slate-50 border-slate-200 rounded-xl" />
             </div>
             <div className="space-y-2">
               <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Password</Label>
-              <Input type="password" placeholder="At least 8 characters" className="h-12 bg-slate-50 border-slate-200 rounded-xl" />
+              <Input name="password" type="password" required placeholder="At least 8 characters" className="h-12 bg-slate-50 border-slate-200 rounded-xl" />
             </div>
             <div className="space-y-2">
               <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Choose Username</Label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">glow.page/</span>
-                <Input type="text" placeholder="yourname" className="h-12 bg-slate-50 border-slate-200 rounded-xl pl-[88px]" />
+                <Input name="username" type="text" required placeholder="yourname" className="h-12 bg-slate-50 border-slate-200 rounded-xl pl-[88px]" />
               </div>
             </div>
-            <Button className="w-full h-12 primary-gradient text-white font-bold rounded-xl glow-shadow border-none">
+            <Button type="submit" className="w-full h-12 primary-gradient text-white font-bold rounded-xl glow-shadow border-none">
               Create Account
             </Button>
           </form>

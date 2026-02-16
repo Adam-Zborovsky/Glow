@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 // ═══════════════════════════════════════
@@ -18,8 +18,8 @@ model User {
   name          String?
   username      String    @unique     // glow.page/{username}
   avatarUrl     String?
-  plan          Plan      @default(FREE)
-  stripeCustomerId  String?   @unique
+  plan          String    @default("FREE")
+  stripeCustomerId  String?   
   stripeSubId       String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -38,12 +38,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String? 
+  access_token      String? 
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String? 
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -73,14 +73,14 @@ model Page {
   title       String   @default("My Page")
   published   Boolean  @default(false)
   themeId     String   @default("spotlight")
-  customTheme Json?    // custom colors, fonts, bg overrides
+  customTheme String?  // SQLite uses String for JSON
   seoTitle    String?
   seoDesc     String?
   ogImageUrl  String?
   favicon     String?
-  customDomain String?  @unique
+  customDomain String?  
   domainVerified Boolean @default(false)
-  customCss   String?  @db.Text
+  customCss   String?  
   gaId        String?  // Google Analytics ID
   fbPixelId   String?  // Facebook Pixel ID
   createdAt   DateTime @default(now())
@@ -97,8 +97,8 @@ model Page {
 model Block {
   id        String   @id @default(cuid())
   pageId    String
-  type      BlockType
-  content   Json     // block-specific data (varies by type)
+  type      String
+  content   String   // SQLite uses String for JSON
   sortOrder Int
   visible   Boolean  @default(true)
   createdAt DateTime @default(now())
@@ -121,7 +121,7 @@ model PageView {
   userId    String   // page owner
   referrer  String?
   country   String?
-  device    Device?
+  device    String?
   browser   String?
   timestamp DateTime @default(now())
 
@@ -139,46 +139,11 @@ model BlockClick {
   url       String?
   referrer  String?
   country   String?
-  device    Device?
+  device    String?
   timestamp DateTime @default(now())
 
   block Block @relation(fields: [blockId], references: [id], onDelete: Cascade)
 
   @@index([blockId, timestamp])
   @@map("block_clicks")
-}
-
-// ═══════════════════════════════════════
-// ENUMS
-// ═══════════════════════════════════════
-
-enum Plan {
-  FREE
-  PRO
-}
-
-enum BlockType {
-  LINK_BUTTON
-  LINK_CARD
-  BIO
-  SOCIAL_ICONS
-  IMAGE
-  IMAGE_GRID
-  VIDEO_EMBED
-  MUSIC_EMBED
-  HEADER
-  TEXT_BLOCK
-  NEWSLETTER
-  CONTACT_FORM
-  TESTIMONIAL
-  MAP
-  COUNTDOWN
-  FILE_DOWNLOAD
-  CUSTOM_HTML
-}
-
-enum Device {
-  MOBILE
-  DESKTOP
-  TABLET
 }

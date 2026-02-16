@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, ArrowRight, CheckCircle2, UserPlus, CircleDollarSign, Eye } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function Hero() {
   return (
@@ -24,11 +25,11 @@ export function Hero() {
         </p>
         
         <div className="flex flex-wrap items-center gap-4 pt-4">
-          <Button size="lg" className="primary-gradient text-white px-10 py-6 rounded-xl font-bold text-lg glow-shadow hover:scale-105 transition-transform border-none h-auto">
-            Start Building — It&apos;s Free
+          <Button size="lg" className="primary-gradient text-white px-10 py-6 rounded-xl font-bold text-lg glow-shadow hover:scale-105 transition-transform border-none h-auto" asChild>
+            <Link href="/signup">Start Building — It&apos;s Free</Link>
           </Button>
-          <Button size="lg" variant="outline" className="px-10 py-6 rounded-xl border-2 border-slate-200 text-slate-700 font-bold text-lg hover:bg-slate-50 transition-colors h-auto">
-            See Examples <ArrowRight className="ml-2 w-5 h-5" />
+          <Button size="lg" variant="outline" className="px-10 py-6 rounded-xl border-2 border-slate-200 text-slate-700 font-bold text-lg hover:bg-slate-50 transition-colors h-auto" asChild>
+            <Link href="#features">See Examples <ArrowRight className="ml-2 w-5 h-5" /></Link>
           </Button>
         </div>
         

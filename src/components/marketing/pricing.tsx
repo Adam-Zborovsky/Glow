@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const freeFeatures = [
   { name: "Unlimited links & blocks", included: true },
@@ -85,8 +86,8 @@ export function Pricing() {
               ))}
             </ul>
             
-            <Button variant="outline" className="w-full py-6 rounded-xl border-slate-200 text-slate-900 font-bold text-base hover:bg-slate-50 transition-colors h-auto">
-              Get Started Free
+            <Button variant="outline" className="w-full py-6 rounded-xl border-slate-200 text-slate-900 font-bold text-base hover:bg-slate-50 transition-colors h-auto" asChild>
+              <Link href="/signup">Get Started Free</Link>
             </Button>
           </div>
 
@@ -119,8 +120,10 @@ export function Pricing() {
               ))}
             </ul>
             
-            <Button className="w-full py-6 rounded-xl primary-gradient text-white font-bold text-base glow-shadow hover:scale-[1.02] transition-transform border-none h-auto">
-              <Sparkles className="w-4 h-4 mr-2" /> Start 14-Day Free Trial
+            <Button className="w-full py-6 rounded-xl primary-gradient text-white font-bold text-base glow-shadow hover:scale-[1.02] transition-transform border-none h-auto" asChild>
+              <Link href="/signup">
+                <Sparkles className="w-4 h-4 mr-2" /> Start 14-Day Free Trial
+              </Link>
             </Button>
           </div>
         </div>
