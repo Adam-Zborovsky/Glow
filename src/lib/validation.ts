@@ -18,7 +18,7 @@ export const blockContentSchema = z.union([
   z.object({
     url: z.string().url().optional().or(z.literal("")),
   }),
-  z.record(z.any()) // Fallback for other blocks
+  z.record(z.string(), z.any()) // Fallback for other blocks
 ]);
 
 export const blockSchema = z.object({
