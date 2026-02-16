@@ -11,8 +11,8 @@ echo "Pushing database schema..."
 npx prisma db push --accept-data-loss
 
 # Seed database if needed (optional)
-echo "Seeding database..."
-npx prisma db seed
+# echo "Seeding database..."
+# npx prisma db seed
 
 # Start the application
 echo "Starting application..."
