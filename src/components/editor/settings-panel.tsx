@@ -12,6 +12,7 @@ import {
   AlignRight, 
   Trash2, 
   Instagram,
+  Image as ImageIcon,
   Youtube,
   Twitter,
   Github,
