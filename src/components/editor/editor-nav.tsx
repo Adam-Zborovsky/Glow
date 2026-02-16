@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 export function EditorNav({ initialPublished = false }: { initialPublished?: boolean }) {
-  const { blocks, themeId } = useEditorStore();
+  const { blocks, themeId, deviceView, setDeviceView, setIsPreviewOpen } = useEditorStore();
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [isPublished, setIsPublished] = useState(initialPublished);
@@ -70,7 +70,12 @@ export function EditorNav({ initialPublished = false }: { initialPublished?: boo
       <div className="flex items-center bg-slate-100 p-1 rounded-lg">
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-10 text-slate-400 hover:text-primary">
+            <Button 
+              variant={deviceView === 'mobile' ? "secondary" : "ghost"} 
+              size="icon" 
+              className={cn("h-8 w-10", deviceView === 'mobile' ? "bg-white shadow-sm text-primary" : "text-slate-400 hover:text-primary")}
+              onClick={() => setDeviceView('mobile')}
+            >
               <Smartphone className="w-4 h-4" />
             </Button>
           </TooltipTrigger>
@@ -79,7 +84,12 @@ export function EditorNav({ initialPublished = false }: { initialPublished?: boo
         
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="secondary" size="icon" className="h-8 w-10 bg-white shadow-sm text-primary">
+            <Button 
+              variant={deviceView === 'tablet' ? "secondary" : "ghost"} 
+              size="icon" 
+              className={cn("h-8 w-10", deviceView === 'tablet' ? "bg-white shadow-sm text-primary" : "text-slate-400 hover:text-primary")}
+              onClick={() => setDeviceView('tablet')}
+            >
               <Tablet className="w-4 h-4" />
             </Button>
           </TooltipTrigger>
@@ -88,7 +98,12 @@ export function EditorNav({ initialPublished = false }: { initialPublished?: boo
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-10 text-slate-400 hover:text-primary">
+            <Button 
+              variant={deviceView === 'desktop' ? "secondary" : "ghost"} 
+              size="icon" 
+              className={cn("h-8 w-10", deviceView === 'desktop' ? "bg-white shadow-sm text-primary" : "text-slate-400 hover:text-primary")}
+              onClick={() => setDeviceView('desktop')}
+            >
               <Monitor className="w-4 h-4" />
             </Button>
           </TooltipTrigger>
@@ -107,7 +122,12 @@ export function EditorNav({ initialPublished = false }: { initialPublished?: boo
           {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           Save
         </Button>
-        <Button variant="outline" size="sm" className="gap-2 h-9">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="gap-2 h-9"
+          onClick={() => setIsPreviewOpen(true)}
+        >
           <Eye className="w-4 h-4" />
           Preview
         </Button>

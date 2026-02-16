@@ -2,6 +2,7 @@ import { EditorNav } from "@/components/editor/editor-nav";
 import { BlockSidebar } from "@/components/editor/block-sidebar";
 import { EditorCanvas } from "@/components/editor/editor-canvas";
 import { SettingsPanel } from "@/components/editor/settings-panel";
+import { PreviewOverlay } from "@/components/editor/preview-overlay";
 import { getPageWithBlocks } from "@/lib/actions";
 import { notFound } from "next/navigation";
 import { HydrateEditor } from "@/components/editor/hydrate-editor";
@@ -17,6 +18,7 @@ export default async function EditorPage({ params }: { params: Promise<{ pageId:
   return (
     <div className="h-screen overflow-hidden flex flex-col bg-white text-slate-900 font-sans">
       <HydrateEditor blocks={page.blocks} themeId={page.themeId} />
+      <PreviewOverlay />
       <EditorNav initialPublished={page.published} />
       <div className="flex flex-1 overflow-hidden">
         <BlockSidebar />

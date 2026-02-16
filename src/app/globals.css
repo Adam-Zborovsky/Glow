@@ -146,6 +146,11 @@
   box-shadow: 25px 30px 70px rgba(0,0,0,0.12);
 }
 
+@utility iphone-frame-flat {
+  transform: none;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
 @layer base {
   * {
     border-color: var(--border);

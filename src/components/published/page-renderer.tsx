@@ -152,6 +152,53 @@ function RenderPublishedBlock({
         </div>
       );
 
+    case 'header':
+      return (
+        <div className="w-full py-2">
+          <h3 className={cn(
+            "text-xl font-bold tracking-tight",
+            template === 'minimal' ? "text-slate-900" : "text-white"
+          )}>
+            {block.content.text || 'Section Header'}
+          </h3>
+        </div>
+      );
+
+    case 'text':
+      return (
+        <div className={cn(
+          "w-full text-sm leading-relaxed",
+          template === 'minimal' ? "text-slate-600" : "text-white/80"
+        )}>
+          {block.content.text}
+        </div>
+      );
+
+    case 'image':
+      return (
+        <div className={cn(
+          "w-full aspect-video rounded-3xl overflow-hidden shadow-xl",
+          template === 'minimal' ? "bg-slate-100" : "bg-white/10"
+        )}>
+          {block.content.url && (
+            <img src={block.content.url} alt="Content" className="w-full h-full object-cover" />
+          )}
+        </div>
+      );
+
+    case 'video':
+      return (
+        <div className="w-full aspect-video rounded-3xl overflow-hidden shadow-xl bg-black">
+          {block.content.url && (
+            <iframe 
+              src={block.content.url.replace('watch?v=', 'embed/')} 
+              className="w-full h-full"
+              allowFullScreen
+            />
+          )}
+        </div>
+      );
+
     case 'music':
       return (
         <div 

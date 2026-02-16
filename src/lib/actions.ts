@@ -16,6 +16,10 @@ export async function register(prevState: any, formData: FormData) {
   const password = formData.get("password") as string;
   const username = formData.get("username") as string;
 
+  // Rate limiting: 5 registrations per hour
+  const isAllowed = rateLimit(`reg_${email}`, 5, 3600000);
+  if (!isAllowed) return { error: "Too many attempts. Please try again later." };
+
   if (!email || !password || !username) {
     return { error: "Missing required fields" };
   }
@@ -88,6 +92,10 @@ export async function register(prevState: any, formData: FormData) {
 export async function login(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+
+  // Rate limiting: 10 logins per 15 minutes
+  const isAllowed = rateLimit(`login_${email}`, 10, 900000);
+  if (!isAllowed) return { error: "Too many login attempts. Please try again in 15 minutes." };
 
   if (!email || !password) {
     return { error: "Missing email or password" };
@@ -283,6 +291,33 @@ export async function getPageWithBlocks(pageId: string) {
   };
 }
 
+import { saveBlocksSchema } from "./validation";
+import { rateLimit } from "./rate-limit";
+
+// Simple sanitization function
+function sanitize(text: string): string {
+  if (!text) return text;
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function sanitizeObject(obj: any): any {
+  if (typeof obj === 'string') return sanitize(obj);
+  if (Array.isArray(obj)) return obj.map(sanitizeObject);
+  if (obj && typeof obj === 'object') {
+    const newObj: any = {};
+    for (const key in obj) {
+      newObj[key] = sanitizeObject(obj[key]);
+    }
+    return newObj;
+  }
+  return obj;
+}
+
 // ═══════════════════════════════════════
 // BLOCK ACTIONS
 // ═══════════════════════════════════════
@@ -290,6 +325,25 @@ export async function getPageWithBlocks(pageId: string) {
 export async function saveBlocks(pageId: string, blocks: any[], themeId?: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
+
+  // Rate limiting: 10 saves per minute
+  const isAllowed = rateLimit(`save_${session.user.id}`, 10, 60000);
+  if (!isAllowed) throw new Error("Too many requests. Please wait a minute.");
+
+  // Validation
+  const validated = saveBlocksSchema.safeParse({ pageId, blocks, themeId });
+  if (!validated.success) {
+    console.error("Validation error:", validated.error);
+    throw new Error("Invalid block data");
+  }
+
+  const { blocks: validatedBlocks, themeId: validatedThemeId } = validated.data;
+
+  // Sanitization
+  const sanitizedBlocks = validatedBlocks.map(block => ({
+    ...block,
+    content: sanitizeObject(block.content)
+  }));
 
   // Verify ownership
   const page = await prisma.page.findUnique({
@@ -299,16 +353,15 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
   if (!page) throw new Error("Page not found");
 
   // Simple implementation: delete all and recreate
-  // In production, you'd want to upsert/diff for better performance
   await prisma.$transaction([
     prisma.page.update({
       where: { id: pageId },
-      data: { themeId: themeId || "creator" }
+      data: { themeId: validatedThemeId || "creator" }
     }),
     prisma.block.deleteMany({ where: { pageId } }),
     prisma.block.createMany({
-      data: blocks.map((block, index) => ({
-        id: block.id.startsWith('initial') ? undefined : block.id,
+      data: sanitizedBlocks.map((block, index) => ({
+        id: block.id.startsWith('initial') || block.id.length < 5 ? undefined : block.id,
         pageId,
         type: block.type.toUpperCase().replace('-', '_'),
         content: JSON.stringify(block.content),
@@ -318,7 +371,8 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
   ]);
 
   revalidatePath(`/editor/${pageId}`);
-  revalidatePath(`/${session.user.username}`);
+  const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+  if (user) revalidatePath(`/${user.username}`);
 }
 
 export async function publishPage(pageId: string, published: boolean) {

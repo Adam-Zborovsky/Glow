@@ -52,11 +52,20 @@ export function BlockSidebar() {
         >
           Theme
         </button>
+        <button 
+          onClick={() => setActiveTab('settings')}
+          className={cn(
+            "flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2",
+            activeTab === 'settings' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
+          )}
+        >
+          Settings
+        </button>
       </div>
 
       <ScrollArea className="flex-1 px-6 pt-6">
-        {activeTab === 'blocks' ? (
-          <div className="space-y-2">
+        {activeTab === 'blocks' && (
+          <div className="space-y-2 pb-6">
             {availableBlocks.map((block) => {
               const count = blocks.filter(b => b.type === block.type).length;
               return (
@@ -87,8 +96,10 @@ export function BlockSidebar() {
               );
             })}
           </div>
-        ) : (
-          <div className="space-y-6">
+        )}
+
+        {activeTab === 'theme' && (
+          <div className="space-y-6 pb-6">
             <div className="space-y-3">
               <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Select Template</h4>
               <div className="grid grid-cols-1 gap-3">
@@ -114,10 +125,46 @@ export function BlockSidebar() {
             </div>
           </div>
         )}
+
+        {activeTab === 'settings' && (
+          <div className="space-y-6 pb-6">
+            <div className="space-y-4">
+              <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Page Settings</h4>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-700">Page Title</label>
+                  <input 
+                    type="text" 
+                    placeholder="My Awesome Page"
+                    className="w-full p-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-700">Search Description (SEO)</label>
+                  <textarea 
+                    placeholder="Briefly describe what this page is about..."
+                    className="w-full p-3 rounded-xl border border-slate-200 text-sm h-24 resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  />
+                </div>
+                <div className="pt-2">
+                   <button className="w-full py-3 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10">
+                    Update SEO Settings
+                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </ScrollArea>
 
-      <div className="p-6 mt-auto border-t border-slate-100 space-y-1">
-        <button className="w-full flex items-center gap-3 p-2 rounded-lg text-slate-500 hover:bg-slate-50 transition-all">
+      <div className="p-6 mt-auto border-t border-slate-100">
+        <button 
+          onClick={() => setActiveTab('settings')}
+          className={cn(
+            "w-full flex items-center gap-3 p-2 rounded-lg transition-all",
+            activeTab === 'settings' ? "bg-primary/5 text-primary" : "text-slate-500 hover:bg-slate-50"
+          )}
+        >
           <Settings className="w-4 h-4" />
           <span className="text-sm font-medium">Settings</span>
         </button>

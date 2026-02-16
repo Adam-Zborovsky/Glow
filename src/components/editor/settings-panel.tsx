@@ -20,6 +20,13 @@ export function SettingsPanel() {
   
   const selectedBlock = blocks.find(b => b.id === selectedBlockId);
 
+  const handleImageChange = () => {
+    const url = window.prompt("Enter image URL:", selectedBlock?.content.photoUrl || selectedBlock?.content.url || "");
+    if (url !== null && selectedBlock) {
+      updateBlockContent(selectedBlock.id, { [selectedBlock.type === 'bio' ? 'photoUrl' : 'url']: url });
+    }
+  };
+
   if (!selectedBlock) {
     return (
       <aside className="w-[360px] border-l border-slate-200 bg-white flex flex-col items-center justify-center p-8 text-center">
@@ -48,9 +55,12 @@ export function SettingsPanel() {
               <div className="space-y-4">
                 <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Profile Picture</Label>
                 <div className="flex items-center gap-6">
-                  <div className="w-20 h-20 rounded-full bg-slate-100 border-2 border-slate-200 overflow-hidden relative group cursor-pointer">
+                  <div 
+                    onClick={handleImageChange}
+                    className="w-20 h-20 rounded-full bg-slate-100 border-2 border-slate-200 overflow-hidden relative group cursor-pointer"
+                  >
                     <img 
-                      src={selectedBlock.content.photoUrl || "https://i.pravatar.cc/150"} 
+                      src={selectedBlock.content.photoUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"} 
                       alt="Profile" 
                       className="w-full h-full object-cover"
                     />
@@ -59,7 +69,12 @@ export function SettingsPanel() {
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <button className="text-sm font-bold text-primary hover:underline">Change Image</button>
+                    <button 
+                      onClick={handleImageChange}
+                      className="text-sm font-bold text-primary hover:underline"
+                    >
+                      Change Image
+                    </button>
                     <p className="text-[10px] text-slate-400 font-medium">JPG, PNG up to 5MB</p>
                   </div>
                 </div>
@@ -139,8 +154,108 @@ export function SettingsPanel() {
                 </div>
              </div>
           )}
+
+          {selectedBlock.type === 'header' && (
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Header Text</Label>
+                <Input 
+                  value={selectedBlock.content.text || ''} 
+                  onChange={(e) => updateBlockContent(selectedBlock.id, { text: e.target.value })}
+                  placeholder="My Projects"
+                  className="h-11 bg-slate-50 border-slate-200"
+                />
+              </div>
+            </div>
+          )}
+
+          {selectedBlock.type === 'text' && (
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Content</Label>
+                <Textarea 
+                  value={selectedBlock.content.text || ''} 
+                  onChange={(e) => updateBlockContent(selectedBlock.id, { text: e.target.value })}
+                  className="bg-slate-50 border-slate-200 min-h-[200px] resize-none"
+                />
+              </div>
+            </div>
+          )}
+
+          {selectedBlock.type === 'image' && (
+            <div className="space-y-5">
+              <div className="space-y-4">
+                <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Image Content</Label>
+                <div 
+                  onClick={handleImageChange}
+                  className="w-full aspect-video rounded-2xl bg-slate-100 border-2 border-slate-200 overflow-hidden relative group cursor-pointer"
+                >
+                  {selectedBlock.content.url ? (
+                    <img src={selectedBlock.content.url} alt="Content" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
+                      <Camera className="w-8 h-8 mb-2" />
+                      <span className="text-xs font-bold">Add Image</span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Camera className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="w-full h-11 border-dashed"
+                  onClick={handleImageChange}
+                >
+                  {selectedBlock.content.url ? 'Change Image' : 'Select Image'}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {selectedBlock.type === 'video' && (
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Video URL (YouTube/Vimeo)</Label>
+                <Input 
+                  value={selectedBlock.content.url || ''} 
+                  onChange={(e) => updateBlockContent(selectedBlock.id, { url: e.target.value })}
+                  placeholder="https://youtube.com/watch?v=..."
+                  className="h-11 bg-slate-50 border-slate-200"
+                />
+              </div>
+            </div>
+          )}
+
+          {selectedBlock.type === 'music' && (
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Spotify/Apple Music URL</Label>
+                <Input 
+                  value={selectedBlock.content.url || ''} 
+                  onChange={(e) => updateBlockContent(selectedBlock.id, { url: e.target.value })}
+                  placeholder="https://open.spotify.com/track/..."
+                  className="h-11 bg-slate-50 border-slate-200"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </ScrollArea>
+
+      <div className="p-6 border-t border-slate-100 bg-slate-50/50 mt-auto">
+        <Button 
+          variant="ghost" 
+          onClick={() => removeBlock(selectedBlock.id)}
+          className="w-full py-6 flex items-center justify-center gap-2 text-red-500 hover:text-red-600 hover:bg-red-50 font-bold rounded-xl transition-all"
+        >
+          <Trash2 className="w-4 h-4" />
+          Delete Block
+        </Button>
+      </div>
+    </aside>
+  );
+}
 
       <div className="p-6 border-t border-slate-100 bg-slate-50/50 mt-auto">
         <Button 
