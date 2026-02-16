@@ -144,11 +144,38 @@
 @utility iphone-frame {
   transform: perspective(1200px) rotateY(-8deg) rotateX(4deg) rotateZ(2deg);
   box-shadow: 25px 30px 70px rgba(0,0,0,0.12);
+  border-radius: 50px;
+  overflow: hidden;
 }
 
 @utility iphone-frame-flat {
   transform: none;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: 50px;
+  overflow: hidden;
+}
+
+@utility custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb, rgba(0, 0, 0, 0.1));
+    border-radius: 20px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover, rgba(0, 0, 0, 0.2));
+  }
+  
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb, rgba(0, 0, 0, 0.1)) transparent;
+  
+  /* Ensure it's on the right and content doesn't shift */
+  direction: ltr;
 }
 
 @layer base {
