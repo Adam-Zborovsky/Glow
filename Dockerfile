@@ -2,7 +2,7 @@
 FROM node:20-alpine AS build
 
 # Install build dependencies
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat python3 make g++
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ COPY package.json package-lock.json ./
 COPY prisma ./prisma/
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Copy project files
 COPY . .
