@@ -146,6 +146,7 @@
   box-shadow: 25px 30px 70px rgba(0,0,0,0.12);
   border-radius: 50px;
   overflow: hidden;
+  transform-style: preserve-3d;
 }
 
 @utility iphone-frame-flat {
@@ -153,6 +154,7 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   border-radius: 50px;
   overflow: hidden;
+  transform-style: preserve-3d;
 }
 
 @utility custom-scrollbar {

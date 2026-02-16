@@ -36,18 +36,18 @@ export function EditorCanvas() {
       </div>
 
       <div className={cn(
-        "relative transition-all duration-500 ease-in-out shrink-0 rounded-[50px] overflow-hidden",
+        "relative transition-all duration-500 ease-in-out shrink-0",
         is3dView ? "iphone-frame" : "iphone-frame-flat",
         deviceView === 'mobile' && "w-[340px] h-[700px]",
         deviceView === 'tablet' && "w-[500px] h-[700px]",
         deviceView === 'desktop' && "w-[800px] h-[700px]"
       )}>
         {/* Frame Border (visual only) */}
-        <div className="absolute inset-0 bg-black rounded-[50px] shadow-2xl pointer-events-none z-10"></div>
+        <div className="absolute inset-0 bg-black rounded-[50px] shadow-2xl pointer-events-none"></div>
 
         {/* Inner Screen */}
         <div className={cn(
-          "absolute inset-2 bg-slate-900 rounded-[42px] overflow-hidden flex flex-col items-center overflow-y-auto custom-scrollbar transition-all duration-500 isolate [direction:ltr]",
+          "absolute inset-2 bg-slate-900 rounded-[42px] overflow-hidden flex flex-col items-center overflow-y-auto custom-scrollbar transition-all duration-500 isolate [direction:ltr] [transform:translateZ(1px)]",
           themeId === 'creator' && "hero-gradient text-white [--scrollbar-thumb:rgba(255,255,255,0.2)] [--scrollbar-thumb-hover:rgba(255,255,255,0.3)]",
           themeId === 'minimal' && "bg-white text-slate-900 [--scrollbar-thumb:rgba(0,0,0,0.1)] [--scrollbar-thumb-hover:rgba(0,0,0,0.15)]",
           themeId === 'dark' && "bg-slate-950 text-white [--scrollbar-thumb:rgba(255,255,255,0.15)] [--scrollbar-thumb-hover:rgba(255,255,255,0.25)]"
