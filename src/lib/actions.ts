@@ -338,7 +338,8 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
     const validated = saveBlocksSchema.safeParse({ pageId, blocks, themeId });
     if (!validated.success) {
       console.error("Validation error:", JSON.stringify(validated.error.format(), null, 2));
-      throw new Error("Invalid block data: " + (validated.error.errors[0]?.message || "Unknown error"));
+      const firstError = validated.error.errors[0];
+      throw new Error("Invalid block data: " + (firstError ? firstError.message : "Unknown error"));
     }
 
     const { blocks: validatedBlocks, themeId: validatedThemeId } = validated.data;
