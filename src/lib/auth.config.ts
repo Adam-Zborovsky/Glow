@@ -9,6 +9,7 @@ export default {
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
     }),
   ],
+  trustHost: true,
   callbacks: {
     async session({ session, token }: any) {
       if (token?.sub && session.user) {

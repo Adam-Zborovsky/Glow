@@ -11,7 +11,7 @@ export default auth((req) => {
 
   if (isAuthPage) {
     if (isAuth) {
-      return NextResponse.redirect(new URL("/dashboard", req.nextUrl))
+      return NextResponse.redirect(new URL("/dashboard", req.url))
     }
     return NextResponse.next()
   }
@@ -23,7 +23,7 @@ export default auth((req) => {
     }
 
     return NextResponse.redirect(
-      new URL(`/login?from=${encodeURIComponent(from)}`, req.nextUrl)
+      new URL(`/login?from=${encodeURIComponent(from)}`, req.url)
     );
   }
 
