@@ -26,6 +26,9 @@ RUN npm run build
 # Stage 2: Run
 FROM node:20-alpine AS runner
 
+# Install runtime dependencies
+RUN apk add --no-cache openssl libc6-compat
+
 WORKDIR /app
 
 ENV NODE_ENV production
@@ -39,6 +42,10 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=build /app/public ./public
 COPY --from=build --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=build --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Explicitly copy Prisma schema and engines for standalone mode
+COPY --from=build --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=build --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 
 USER nextjs
 
