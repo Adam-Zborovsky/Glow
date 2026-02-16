@@ -117,22 +117,37 @@ function RenderPublishedBlock({
       );
 
     case 'social-icons':
+      const platforms = [
+        { id: 'instagram', icon: Instagram },
+        { id: 'youtube', icon: Youtube },
+        { id: 'twitter', icon: Twitter },
+        { id: 'github', icon: Github },
+        { id: 'linkedin', icon: Linkedin },
+      ];
+      
+      const activeSocials = platforms.filter(p => block.content[p.id]);
+
       return (
-        <div className="flex gap-4 justify-center py-4">
-          {[Instagram, Youtube, Twitter, Github].map((Icon, i) => (
-            <div 
-              key={i} 
-              onClick={() => onBlockClick(block.id)}
-              className={cn(
-                "w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer",
-                template === 'minimal' 
-                  ? "bg-slate-100 text-slate-600 hover:bg-slate-200" 
-                  : "bg-white/10 text-white backdrop-blur-md border border-white/20 hover:bg-white/20"
-              )}
-            >
-              <Icon className="w-5 h-5" />
-            </div>
-          ))}
+        <div className="flex gap-4 justify-center py-4 flex-wrap">
+          {activeSocials.length > 0 ? (
+            activeSocials.map((platform) => (
+              <div 
+                key={platform.id} 
+                onClick={() => onBlockClick(block.id, block.content[platform.id])}
+                className={cn(
+                  "w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer",
+                  template === 'minimal' 
+                    ? "bg-slate-100 text-slate-600 hover:bg-slate-200" 
+                    : "bg-white/10 text-white backdrop-blur-md border border-white/20 hover:bg-white/20"
+                )}
+              >
+                <platform.icon className="w-5 h-5" />
+              </div>
+            ))
+          ) : (
+            // Fallback for empty social icons in published view (shouldn't really happen if filtered)
+            null
+          )}
         </div>
       );
 
@@ -176,10 +191,13 @@ function RenderPublishedBlock({
 
     case 'image':
       return (
-        <div className={cn(
-          "w-full aspect-video rounded-3xl overflow-hidden shadow-xl",
-          template === 'minimal' ? "bg-slate-100" : "bg-white/10"
-        )}>
+        <div 
+          onClick={() => onBlockClick(block.id, block.content.url)}
+          className={cn(
+            "w-full aspect-video rounded-3xl overflow-hidden shadow-xl cursor-pointer transition-all hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]",
+            template === 'minimal' ? "bg-slate-100" : "bg-white/10"
+          )}
+        >
           {block.content.url && (
             <img src={block.content.url} alt="Content" className="w-full h-full object-cover" />
           )}
@@ -202,9 +220,9 @@ function RenderPublishedBlock({
     case 'music':
       return (
         <div 
-          onClick={() => onBlockClick(block.id)}
+          onClick={() => onBlockClick(block.id, block.content.url)}
           className={cn(
-            "w-full p-4 rounded-2xl flex items-center gap-4 transition-all cursor-pointer",
+            "w-full p-4 rounded-2xl flex items-center gap-4 transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]",
             template === 'minimal' ? "bg-slate-50 border border-slate-100" : "bg-white/10 border border-white/10"
           )}
         >

@@ -41,3 +41,10 @@ export const saveBlocksSchema = z.object({
   blocks: z.array(blockSchema),
   themeId: z.enum(['creator', 'minimal', 'dark']).optional(),
 });
+
+export const updatePageMetadataSchema = z.object({
+  pageId: z.string(),
+  title: z.string().min(1, "Title is required").max(100),
+  seoTitle: z.string().optional(),
+  seoDesc: z.string().optional(),
+});

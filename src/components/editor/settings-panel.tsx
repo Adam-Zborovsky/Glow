@@ -11,22 +11,27 @@ import {
   AlignCenter, 
   AlignRight, 
   Trash2, 
-  Camera 
+  Instagram,
+  Youtube,
+  Twitter,
+  Github,
+  Linkedin
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+
+const socialPlatforms = [
+  { id: 'instagram', label: 'Instagram', icon: Instagram, placeholder: 'https://instagram.com/username' },
+  { id: 'youtube', label: 'YouTube', icon: Youtube, placeholder: 'https://youtube.com/@channel' },
+  { id: 'twitter', label: 'Twitter / X', icon: Twitter, placeholder: 'https://twitter.com/username' },
+  { id: 'github', label: 'GitHub', icon: Github, placeholder: 'https://github.com/username' },
+  { id: 'linkedin', label: 'LinkedIn', icon: Linkedin, placeholder: 'https://linkedin.com/in/username' },
+];
 
 export function SettingsPanel() {
   const { blocks, selectedBlockId, updateBlockContent, removeBlock } = useEditorStore();
   
   const selectedBlock = blocks.find(b => b.id === selectedBlockId);
-
-  const handleImageChange = () => {
-    const url = window.prompt("Enter image URL:", selectedBlock?.content.photoUrl || selectedBlock?.content.url || "");
-    if (url !== null && selectedBlock) {
-      updateBlockContent(selectedBlock.id, { [selectedBlock.type === 'bio' ? 'photoUrl' : 'url']: url });
-    }
-  };
 
   if (!selectedBlock) {
     return (
@@ -66,32 +71,54 @@ export function SettingsPanel() {
 
       <ScrollArea className="flex-1">
         <div className="p-6 space-y-8">
+          {selectedBlock.type === 'social-icons' && (
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Social Profiles</Label>
+                <p className="text-xs text-slate-500">Add your social media profile URLs below.</p>
+              </div>
+              <div className="space-y-4">
+                {socialPlatforms.map((platform) => (
+                  <div key={platform.id} className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <platform.icon className="w-3.5 h-3.5 text-slate-400" />
+                      <Label className="text-xs font-bold text-slate-700">{platform.label}</Label>
+                    </div>
+                    <Input 
+                      value={selectedBlock.content[platform.id] || ''} 
+                      onChange={(e) => updateBlockContent(selectedBlock.id, { [platform.id]: e.target.value })}
+                      placeholder={platform.placeholder}
+                      className="h-10 bg-slate-50 border-slate-200 text-sm"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {selectedBlock.type === 'bio' && (
             <>
               <div className="space-y-4">
                 <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Profile Picture</Label>
                 <div className="flex items-center gap-6">
                   <div 
-                    onClick={handleImageChange}
-                    className="w-20 h-20 rounded-full bg-slate-100 border-2 border-slate-200 overflow-hidden relative group cursor-pointer"
+                    className="w-20 h-20 rounded-full bg-slate-100 border-2 border-slate-200 overflow-hidden relative group"
                   >
                     <img 
                       src={selectedBlock.content.photoUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"} 
                       alt="Profile" 
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Camera className="w-6 h-6 text-white" />
-                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <button 
-                      onClick={handleImageChange}
-                      className="text-sm font-bold text-primary hover:underline"
-                    >
-                      Change Image
-                    </button>
-                    <p className="text-[10px] text-slate-400 font-medium">JPG, PNG up to 5MB</p>
+                  <div className="space-y-2 flex-1">
+                    <Label className="text-xs font-bold text-slate-700">Image URL</Label>
+                    <Input 
+                      value={selectedBlock.content.photoUrl || ''} 
+                      onChange={(e) => updateBlockContent(selectedBlock.id, { photoUrl: e.target.value })}
+                      placeholder="https://..."
+                      className="h-10 bg-slate-50 border-slate-200 text-sm"
+                    />
+                    <p className="text-[10px] text-slate-400 font-medium">Paste a direct link to an image (JPG, PNG)</p>
                   </div>
                 </div>
               </div>
@@ -203,28 +230,27 @@ export function SettingsPanel() {
               <div className="space-y-4">
                 <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Image Content</Label>
                 <div 
-                  onClick={handleImageChange}
-                  className="w-full aspect-video rounded-2xl bg-slate-100 border-2 border-slate-200 overflow-hidden relative group cursor-pointer"
+                  className="w-full aspect-video rounded-2xl bg-slate-100 border-2 border-slate-200 overflow-hidden relative"
                 >
                   {selectedBlock.content.url ? (
                     <img src={selectedBlock.content.url} alt="Content" className="w-full h-full object-cover" />
                   ) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
-                      <Camera className="w-8 h-8 mb-2" />
-                      <span className="text-xs font-bold">Add Image</span>
+                      <ImageIcon className="w-8 h-8 mb-2" />
+                      <span className="text-xs font-bold">Preview</span>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Camera className="w-6 h-6 text-white" />
-                  </div>
                 </div>
-                <Button 
-                  variant="outline" 
-                  className="w-full h-11 border-dashed"
-                  onClick={handleImageChange}
-                >
-                  {selectedBlock.content.url ? 'Change Image' : 'Select Image'}
-                </Button>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold text-slate-700">Image URL</Label>
+                  <Input 
+                    value={selectedBlock.content.url || ''} 
+                    onChange={(e) => updateBlockContent(selectedBlock.id, { url: e.target.value })}
+                    placeholder="https://..."
+                    className="h-10 bg-slate-50 border-slate-200 text-sm"
+                  />
+                  <p className="text-[10px] text-slate-400 font-medium">Paste a direct link to an image</p>
+                </div>
               </div>
             </div>
           )}

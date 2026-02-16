@@ -12,10 +12,14 @@ import {
   Palette,
   Settings,
   Share2,
-  Box
+  Box,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { updatePageMetadata } from "@/lib/actions";
+import { useParams } from "next/navigation";
+import { useState } from "react";
 
 const availableBlocks: { type: BlockType; label: string; icon: any }[] = [
   { type: 'bio', label: 'Bio Block', icon: User },
@@ -29,7 +33,27 @@ const availableBlocks: { type: BlockType; label: string; icon: any }[] = [
 ];
 
 export function BlockSidebar() {
-  const { addBlock, blocks, activeTab, setActiveTab, themeId, setThemeId } = useEditorStore();
+  const { addBlock, blocks, activeTab, setActiveTab, themeId, setThemeId, pageSettings, updatePageSettings } = useEditorStore();
+  const params = useParams();
+  const pageId = params.pageId as string;
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveSettings = async () => {
+    setIsSaving(true);
+    try {
+      const result = await updatePageMetadata(pageId, pageSettings.title, pageSettings.seoTitle, pageSettings.seoDesc);
+      if (result?.error) {
+        alert(result.error);
+      } else {
+        // success toast or feedback could go here
+      }
+    } catch (error) {
+      console.error("Failed to update settings:", error);
+      alert("Failed to update settings");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <aside className="w-[280px] border-r border-slate-200 bg-white flex flex-col h-full">
@@ -135,20 +159,39 @@ export function BlockSidebar() {
                   <label className="text-xs font-bold text-slate-700">Page Title</label>
                   <input 
                     type="text" 
+                    value={pageSettings.title}
+                    onChange={(e) => updatePageSettings({ title: e.target.value })}
                     placeholder="My Awesome Page"
+                    className="w-full p-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-700">SEO Title</label>
+                  <input 
+                    type="text" 
+                    value={pageSettings.seoTitle}
+                    onChange={(e) => updatePageSettings({ seoTitle: e.target.value })}
+                    placeholder="Title for Search Engines"
                     className="w-full p-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-700">Search Description (SEO)</label>
                   <textarea 
+                    value={pageSettings.seoDesc}
+                    onChange={(e) => updatePageSettings({ seoDesc: e.target.value })}
                     placeholder="Briefly describe what this page is about..."
                     className="w-full p-3 rounded-xl border border-slate-200 text-sm h-24 resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                   />
                 </div>
                 <div className="pt-2">
-                   <button className="w-full py-3 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10">
-                    Update SEO Settings
+                   <button 
+                    onClick={handleSaveSettings}
+                    disabled={isSaving}
+                    className="w-full py-3 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 flex items-center justify-center gap-2"
+                   >
+                    {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+                    {isSaving ? "Saving..." : "Update SEO Settings"}
                    </button>
                 </div>
               </div>

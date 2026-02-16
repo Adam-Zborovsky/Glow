@@ -74,7 +74,7 @@ model Page {
   slug        String   @default("main")  // for multi-page support
   title       String   @default("My Page")
   published   Boolean  @default(false)
-  themeId     String   @default("spotlight")
+  themeId     String   @default("creator")
   customTheme String?  // SQLite uses String for JSON
   seoTitle    String?
   seoDesc     String?

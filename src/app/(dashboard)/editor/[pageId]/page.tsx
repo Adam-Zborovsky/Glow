@@ -17,7 +17,13 @@ export default async function EditorPage({ params }: { params: Promise<{ pageId:
 
   return (
     <div className="h-screen overflow-hidden flex flex-col bg-white text-slate-900 font-sans">
-      <HydrateEditor blocks={page.blocks} themeId={page.themeId} />
+      <HydrateEditor 
+        blocks={page.blocks} 
+        themeId={page.themeId} 
+        title={page.title}
+        seoTitle={page.seoTitle || ''}
+        seoDesc={page.seoDesc || ''}
+      />
       <PreviewOverlay />
       <EditorNav initialPublished={page.published} />
       <div className="flex flex-1 overflow-hidden">

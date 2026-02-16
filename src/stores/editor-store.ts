@@ -24,6 +24,11 @@ interface EditorState {
   isPreviewOpen: boolean;
   deviceView: 'mobile' | 'tablet' | 'desktop';
   is3dView: boolean;
+  pageSettings: {
+    title: string;
+    seoTitle: string;
+    seoDesc: string;
+  };
   setBlocks: (blocks: Block[]) => void;
   setThemeId: (id: 'creator' | 'minimal' | 'dark') => void;
   setSelectedBlockId: (id: string | null) => void;
@@ -31,6 +36,8 @@ interface EditorState {
   setIsPreviewOpen: (isOpen: boolean) => void;
   setDeviceView: (view: 'mobile' | 'tablet' | 'desktop') => void;
   setIs3dView: (is3d: boolean) => void;
+  setPageSettings: (settings: { title: string; seoTitle: string; seoDesc: string }) => void;
+  updatePageSettings: (settings: Partial<{ title: string; seoTitle: string; seoDesc: string }>) => void;
   addBlock: (type: BlockType, index?: number) => void;
   removeBlock: (id: string) => void;
   updateBlockContent: (id: string, content: any) => void;
@@ -65,7 +72,12 @@ export const useEditorStore = create<EditorState>((set) => ({
   activeTab: 'blocks',
   isPreviewOpen: false,
   deviceView: 'mobile',
-  is3dView: true,
+  is3dView: false,
+  pageSettings: {
+    title: '',
+    seoTitle: '',
+    seoDesc: '',
+  },
   setBlocks: (blocks) => set({ blocks }),
   setThemeId: (themeId) => set({ themeId }),
   setSelectedBlockId: (id) => set({ selectedBlockId: id }),
@@ -73,6 +85,8 @@ export const useEditorStore = create<EditorState>((set) => ({
   setIsPreviewOpen: (isPreviewOpen) => set({ isPreviewOpen }),
   setDeviceView: (deviceView) => set({ deviceView }),
   setIs3dView: (is3dView) => set({ is3dView }),
+  setPageSettings: (settings) => set({ pageSettings: settings }),
+  updatePageSettings: (settings) => set((state) => ({ pageSettings: { ...state.pageSettings, ...settings } })),
   addBlock: (type, index) => set((state) => {
     const newBlock = { id: Math.random().toString(36).substr(2, 9), type, content: {} };
     const newBlocks = [...state.blocks];

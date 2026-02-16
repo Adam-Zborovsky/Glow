@@ -172,18 +172,34 @@ function RenderBlock({ block, isSelected, themeId }: { block: Block, isSelected:
       );
     
     case 'social-icons':
+      const platforms = [
+        { id: 'instagram', icon: Instagram },
+        { id: 'youtube', icon: Youtube },
+        { id: 'twitter', icon: Twitter },
+        { id: 'github', icon: Github },
+        { id: 'linkedin', icon: Linkedin },
+      ];
+      
+      const activeSocials = platforms.filter(p => block.content[p.id]);
+
       return (
-        <div className="flex gap-4 justify-center py-2">
-          {[Instagram, Youtube, Twitter, Github].map((Icon, i) => (
-            <div key={i} className={cn(
-              "w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110",
-              themeId === 'minimal' 
-                ? "bg-slate-100 text-slate-600" 
-                : "bg-white/20 border-white/30 backdrop-blur-md text-white border"
-            )}>
-              <Icon className="w-5 h-5" />
+        <div className="flex gap-4 justify-center py-2 flex-wrap">
+          {activeSocials.length > 0 ? (
+            activeSocials.map((platform) => (
+              <div key={platform.id} className={cn(
+                "w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110",
+                themeId === 'minimal' 
+                  ? "bg-slate-100 text-slate-600" 
+                  : "bg-white/20 border-white/30 backdrop-blur-md text-white border"
+              )}>
+                <platform.icon className="w-5 h-5" />
+              </div>
+            ))
+          ) : (
+            <div className="text-[10px] opacity-40 uppercase tracking-widest font-bold py-2">
+              No social links added
             </div>
-          ))}
+          )}
         </div>
       );
 
