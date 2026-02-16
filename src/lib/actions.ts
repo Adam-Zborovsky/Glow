@@ -267,7 +267,7 @@ export async function getPageWithBlocks(pageId: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
 
-  const page = await prisma.page.findUnique({
+  const page = await prisma.page.findFirst({
     where: { 
       id: pageId,
       userId: session.user.id
@@ -338,7 +338,7 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
     const validated = saveBlocksSchema.safeParse({ pageId, blocks, themeId });
     if (!validated.success) {
       console.error("Validation error:", JSON.stringify(validated.error.format(), null, 2));
-      throw new Error("Invalid block data: " + validated.error.errors[0].message);
+      throw new Error("Invalid block data: " + (validated.error.errors[0]?.message || "Unknown error"));
     }
 
     const { blocks: validatedBlocks, themeId: validatedThemeId } = validated.data;
@@ -350,11 +350,14 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
     }));
 
     // Verify ownership
-    const page = await prisma.page.findUnique({
+    const page = await prisma.page.findFirst({
       where: { id: pageId, userId: session.user.id }
     });
 
-    if (!page) throw new Error("Page not found or unauthorized");
+    if (!page) {
+      console.error("Save blocks: Page not found or unauthorized", { pageId, userId: session.user.id });
+      throw new Error("Page not found or unauthorized");
+    }
 
     // Simple implementation: delete all and recreate
     await prisma.$transaction([
@@ -394,8 +397,18 @@ export async function publishPage(pageId: string, published: boolean) {
       throw new Error("Unauthorized");
     }
 
+    // Check ownership first since update only takes a unique selector
+    const page = await prisma.page.findFirst({
+      where: { id: pageId, userId: session.user.id }
+    });
+
+    if (!page) {
+      console.error("Publish page: Page not found or unauthorized", { pageId, userId: session.user.id });
+      throw new Error("Page not found or unauthorized");
+    }
+
     await prisma.page.update({
-      where: { id: pageId, userId: session.user.id },
+      where: { id: pageId },
       data: { published }
     });
 
