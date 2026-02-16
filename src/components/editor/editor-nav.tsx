@@ -21,9 +21,13 @@ export function EditorNav({ initialPublished = false }: { initialPublished?: boo
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await saveBlocks(pageId, blocks, themeId);
+      const result = await saveBlocks(pageId, blocks, themeId);
+      if (result?.error) {
+        alert(result.error);
+      }
     } catch (error) {
       console.error("Failed to save:", error);
+      alert("An unexpected error occurred while saving.");
     } finally {
       setIsSaving(false);
     }
@@ -33,12 +37,21 @@ export function EditorNav({ initialPublished = false }: { initialPublished?: boo
     setIsPublishing(true);
     try {
       // First save current changes
-      await saveBlocks(pageId, blocks, themeId);
+      const saveResult = await saveBlocks(pageId, blocks, themeId);
+      if (saveResult?.error) {
+        alert("Failed to save before publishing: " + saveResult.error);
+        setIsPublishing(false);
+        return;
+      }
+      
       // Then toggle published status
-      await publishPage(pageId, !isPublished);
-      setIsPublished(!isPublished);
+      const publishResult = await publishPage(pageId, !isPublished);
+      if (publishResult?.success) {
+        setIsPublished(!isPublished);
+      }
     } catch (error) {
       console.error("Failed to publish:", error);
+      alert("An unexpected error occurred while publishing.");
     } finally {
       setIsPublishing(false);
     }

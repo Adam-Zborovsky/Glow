@@ -6,6 +6,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import bcrypt from "bcryptjs";
+import { saveBlocksSchema } from "./validation";
+import { rateLimit } from "./rate-limit";
 
 // ═══════════════════════════════════════
 // AUTH ACTIONS
@@ -343,9 +345,6 @@ export async function getPageWithBlocks(pageId: string) {
   };
 }
 
-import { saveBlocksSchema } from "./validation";
-import { rateLimit } from "./rate-limit";
-
 // Simple sanitization function
 function sanitize(text: string): string {
   if (!text) return text;
@@ -412,23 +411,27 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
     }
 
     // Simple implementation: delete all and recreate
-    await prisma.$transaction([
-      prisma.page.update({
+    await prisma.$transaction(async (tx) => {
+      await tx.page.update({
         where: { id: pageId },
         data: { themeId: validatedThemeId || "creator" }
-      }),
-      prisma.block.deleteMany({ where: { pageId } }),
-      prisma.block.createMany({
-        data: sanitizedBlocks.map((block, index) => ({
-          // If it's a new block (random id from client), let Prisma generate a CUID
-          id: (block.id.includes('-') && !block.id.startsWith('initial')) || block.id.length < 5 ? undefined : block.id,
-          pageId,
-          type: block.type.toUpperCase().replace('-', '_'),
-          content: JSON.stringify(block.content),
-          sortOrder: index,
-        }))
-      })
-    ]);
+      });
+
+      await tx.block.deleteMany({ where: { pageId } });
+
+      for (let i = 0; i < sanitizedBlocks.length; i++) {
+        const block = sanitizedBlocks[i];
+        await tx.block.create({
+          data: {
+            id: (block.id.includes('-') && !block.id.startsWith('initial')) || block.id.length < 5 ? undefined : block.id,
+            pageId,
+            type: block.type.toUpperCase().replace('-', '_'),
+            content: JSON.stringify(block.content),
+            sortOrder: i,
+          }
+        });
+      }
+    });
 
     revalidatePath(`/editor/${pageId}`);
     const user = await prisma.user.findUnique({ where: { id: session.user.id } });
@@ -437,7 +440,7 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
     return { success: true };
   } catch (error: any) {
     console.error("Save blocks error:", error);
-    throw new Error(error.message || "Failed to save changes");
+    return { error: error.message || "Failed to save changes" };
   }
 }
 
@@ -472,7 +475,7 @@ export async function publishPage(pageId: string, published: boolean) {
     return { success: true };
   } catch (error: any) {
     console.error("Publish page error:", error);
-    throw new Error(error.message || "Failed to update published status");
+    return { error: error.message || "Failed to update published status" };
   }
 }
 
@@ -480,12 +483,12 @@ export async function publishPage(pageId: string, published: boolean) {
 // PUBLIC FETCHING
 // ═══════════════════════════════════════
 
-export async function getPublicPage(username: string) {
+export async function getPublicPage(username: string, slug: string = "main") {
   const user = await prisma.user.findUnique({
     where: { username },
     include: {
       pages: {
-        where: { slug: "main" }, // Default to main page
+        where: { slug },
         include: {
           blocks: {
             where: { visible: true },
