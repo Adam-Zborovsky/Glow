@@ -11,58 +11,62 @@ import bcrypt from "bcryptjs";
 // AUTH ACTIONS
 // ═══════════════════════════════════════
 
-export async function register(formData: FormData) {
+export async function register(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const username = formData.get("username") as string;
 
   if (!email || !password || !username) {
-    throw new Error("Missing required fields");
+    return { error: "Missing required fields" };
   }
 
-  const existingUser = await prisma.user.findFirst({
-    where: {
-      OR: [
-        { email },
-        { username }
-      ]
+  try {
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email },
+          { username }
+        ]
+      }
+    });
+
+    if (existingUser) {
+      return { error: "User with this email or username already exists" };
     }
-  });
 
-  if (existingUser) {
-    throw new Error("User with this email or username already exists");
-  }
+    const passwordHash = await bcrypt.hash(password, 10);
 
-  const passwordHash = await bcrypt.hash(password, 10);
-
-  const user = await prisma.user.create({
-    data: {
-      email,
-      username,
-      passwordHash,
-      // Create an initial page for the user
-      pages: {
-        create: {
-          slug: "main",
-          title: `${username}'s Page`,
-          blocks: {
-            create: [
-              {
-                type: "BIO",
-                sortOrder: 0,
-                content: {
-                  name: username,
-                  title: "Digital Creator",
-                  bio: "Welcome to my page!",
-                  alignment: "center",
-                },
-              },
-            ],
-          },
+    const user = await prisma.user.create({
+      data: {
+        email,
+        username,
+        passwordHash,
+        // Create an initial page for the user
+        pages: {
+          create: {
+            slug: "main",
+            title: `${username}'s Page`,
+                      blocks: {
+                        create: [
+                          {
+                            type: "BIO",
+                            sortOrder: 0,
+                            content: JSON.stringify({
+                              name: username,
+                              title: "Digital Creator",
+                              bio: "Welcome to my page!",
+                              alignment: "center",
+                            }),
+                          },
+                        ],
+                      },          }
         }
       }
-    }
-  });
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    return { error: "Something went wrong" };
+  }
 
   // Automatically sign in after registration
   await signIn("credentials", {
@@ -72,7 +76,7 @@ export async function register(formData: FormData) {
   });
 }
 
-export async function login(formData: FormData) {
+export async function login(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
@@ -202,12 +206,12 @@ export async function createPage() {
           {
             type: "BIO",
             sortOrder: 0,
-            content: {
+            content: JSON.stringify({
               name: user.name || "Your Name",
               title: "Digital Creator",
               bio: "Welcome to my page!",
               alignment: "center",
-            },
+            }),
           },
         ],
       },
@@ -249,7 +253,16 @@ export async function getPageWithBlocks(pageId: string) {
     }
   });
 
-  return page;
+  if (!page) return null;
+
+  return {
+    ...page,
+    customTheme: page.customTheme ? JSON.parse(page.customTheme as string) : null,
+    blocks: page.blocks.map(block => ({
+      ...block,
+      content: JSON.parse(block.content as string)
+    }))
+  };
 }
 
 // ═══════════════════════════════════════
@@ -280,7 +293,7 @@ export async function saveBlocks(pageId: string, blocks: any[], themeId?: string
         id: block.id.startsWith('initial') ? undefined : block.id,
         pageId,
         type: block.type.toUpperCase().replace('-', '_'),
-        content: block.content,
+        content: JSON.stringify(block.content),
         sortOrder: index,
       }))
     })
@@ -327,11 +340,20 @@ export async function getPublicPage(username: string) {
 
   if (!user || user.pages.length === 0) return null;
 
+  const page = user.pages[0];
+
   return {
     user: {
       name: user.name,
       avatarUrl: user.avatarUrl,
     },
-    page: user.pages[0],
+    page: {
+      ...page,
+      customTheme: page.customTheme ? JSON.parse(page.customTheme as string) : null,
+      blocks: page.blocks.map(block => ({
+        ...block,
+        content: JSON.parse(block.content as string)
+      }))
+    },
   };
 }

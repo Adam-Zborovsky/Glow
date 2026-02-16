@@ -4,10 +4,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Github, Chrome as Google, Sparkles } from "lucide-react";
+import { Github, Chrome as Google, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import { login } from "@/lib/actions";
+import { useActionState } from "react";
 
 export default function LoginPage() {
+  const [state, formAction, isPending] = useActionState(login, undefined);
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-white">
       {/* Left Panel: Brand */}
@@ -66,7 +69,14 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <form className="space-y-5" action={login}>
+          <form className="space-y-5" action={formAction}>
+            {state?.error && (
+              <div className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-sm flex items-center gap-3">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <p className="font-medium">{state.error}</p>
+              </div>
+            )}
+            
             <div className="space-y-2">
               <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Email Address</Label>
               <Input name="email" type="email" required placeholder="you@example.com" className="h-12 bg-slate-50 border-slate-200 rounded-xl" />
@@ -78,8 +88,19 @@ export default function LoginPage() {
               </div>
               <Input name="password" type="password" required placeholder="••••••••" className="h-12 bg-slate-50 border-slate-200 rounded-xl" />
             </div>
-            <Button type="submit" className="w-full h-12 primary-gradient text-white font-bold rounded-xl glow-shadow border-none">
-              Log In
+            <Button 
+              type="submit" 
+              className="w-full h-12 primary-gradient text-white font-bold rounded-xl glow-shadow border-none"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Logging in...
+                </>
+              ) : (
+                "Log In"
+              )}
             </Button>
           </form>
 
