@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Glow - Features Section</title>
+<!-- Google Fonts: Inter & Clash Display Alternative (Plus Jakarta Sans is a close free alternative to Clash for high-end feel) -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#7c3bed",
+                "background-light": "#f7f6f8",
+                "background-dark": "#171121",
+                "slate-900": "#0f172a",
+                "slate-600": "#475569",
+                "slate-200": "#e2e8f0",
+              },
+              fontFamily: {
+                "display": ["Inter", "sans-serif"],
+                "heading": ["Plus Jakarta Sans", "Inter", "sans-serif"]
+              },
+              borderRadius: {
+                "DEFAULT": "0.5rem",
+                "lg": "1rem",
+                "xl": "1.5rem",
+                "2xl": "1.25rem", // 20px
+                "full": "9999px"
+              },
+            },
+          },
+        }
+    </script>
+<style>
+        .clash-style {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.03em;
+        }
+        .glow-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-card:hover {
+            border-color: #7c3bed;
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(124, 58, 237, 0.1), 0 8px 10px -6px rgba(124, 58, 237, 0.05);
+        }
+        .icon-container {
+            transition: all 0.4s ease;
+        }
+        .glow-card:hover .icon-container {
+            filter: saturate(1.5) brightness(1.1);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="bg-white font-display text-slate-900 antialiased">
+<!-- Features Section -->
+<section class="py-24 px-6 md:px-12 lg:px-24 max-w-[1440px] mx-auto">
+<!-- Section Header -->
+<div class="text-center mb-20 flex flex-col items-center">
+<span class="text-[12px] font-semibold text-primary uppercase tracking-[0.15em] mb-4">
+                THE GLOW DIFFERENCE
+            </span>
+<h2 class="clash-style text-4xl md:text-5xl font-extrabold text-slate-900 leading-[1.1] mb-6">
+                Everything you need to <br/> build your world.
+            </h2>
+<p class="text-lg text-slate-600 max-w-[600px] leading-relaxed">
+                A complete toolkit for the modern creator. Simple enough for a bio link, powerful enough for a portfolio.
+            </p>
+</div>
+<!-- Feature Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1: Drag & Drop Blocks -->
+<div class="glow-card bg-white border border-slate-200 rounded-2xl p-8 group">
+<div class="icon-container w-12 h-12 flex items-center justify-center rounded-xl bg-violet-100 mb-6 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-icons-round text-primary relative z-10">widgets</span>
+</div>
+<h3 class="clash-style text-xl font-bold text-slate-900 mb-3">Drag &amp; Drop Blocks</h3>
+<p class="text-[14px] leading-6 text-slate-600">
+                    Links, images, forms, and more. Build your unique digital space by simply snapping blocks together.
+                </p>
+</div>
+<!-- Card 2: 20+ Designer Themes -->
+<div class="glow-card bg-white border border-slate-200 rounded-2xl p-8 group">
+<div class="icon-container w-12 h-12 flex items-center justify-center rounded-xl bg-pink-100 mb-6 relative overflow-hidden">
+<div class="absolute inset-0 bg-pink-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-icons-round text-pink-600 relative z-10">auto_awesome</span>
+</div>
+<h3 class="clash-style text-xl font-bold text-slate-900 mb-3">20+ Designer Themes</h3>
+<p class="text-[14px] leading-6 text-slate-600">
+                    Professionally designed templates that look like custom sites. Pick a vibe and make it yours in seconds.
+                </p>
+</div>
+<!-- Card 3: Real-Time Analytics -->
+<div class="glow-card bg-white border border-slate-200 rounded-2xl p-8 group">
+<div class="icon-container w-12 h-12 flex items-center justify-center rounded-xl bg-blue-100 mb-6 relative overflow-hidden">
+<div class="absolute inset-0 bg-blue-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-icons-round text-blue-600 relative z-10">bar_chart</span>
+</div>
+<h3 class="clash-style text-xl font-bold text-slate-900 mb-3">Real-Time Analytics</h3>
+<p class="text-[14px] leading-6 text-slate-600">
+                    Deep insights into who is visiting and what they are clicking. Optimize your performance with real data.
+                </p>
+</div>
+<!-- Card 4: Custom Domains -->
+<div class="glow-card bg-white border border-slate-200 rounded-2xl p-8 group">
+<div class="icon-container w-12 h-12 flex items-center justify-center rounded-xl bg-cyan-100 mb-6 relative overflow-hidden">
+<div class="absolute inset-0 bg-cyan-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-icons-round text-cyan-600 relative z-10">language</span>
+</div>
+<h3 class="clash-style text-xl font-bold text-slate-900 mb-3">Custom Domains</h3>
+<p class="text-[14px] leading-6 text-slate-600">
+                    Use your own name. We handle the SSL, the performance optimization, and the lightning-fast speed.
+                </p>
+</div>
+<!-- Card 5: SEO & Social -->
+<div class="glow-card bg-white border border-slate-200 rounded-2xl p-8 group">
+<div class="icon-container w-12 h-12 flex items-center justify-center rounded-xl bg-orange-100 mb-6 relative overflow-hidden">
+<div class="absolute inset-0 bg-orange-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-icons-round text-orange-600 relative z-10">share</span>
+</div>
+<h3 class="clash-style text-xl font-bold text-slate-900 mb-3">SEO &amp; Social</h3>
+<p class="text-[14px] leading-6 text-slate-600">
+                    Custom meta tags and OG images for every page. Look professional and polished whenever you're shared.
+                </p>
+</div>
+<!-- Card 6: Newsletter Ready -->
+<div class="glow-card bg-white border border-slate-200 rounded-2xl p-8 group">
+<div class="icon-container w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-100 mb-6 relative overflow-hidden">
+<div class="absolute inset-0 bg-emerald-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-icons-round text-emerald-600 relative z-10">mail_outline</span>
+</div>
+<h3 class="clash-style text-xl font-bold text-slate-900 mb-3">Newsletter Ready</h3>
+<p class="text-[14px] leading-6 text-slate-600">
+                    Capture emails directly on your page. Seamlessly integrates with your favorite email marketing tools.
+                </p>
+</div>
+</div>
+<!-- Abstract Decorative Element (Glow Background) -->
+<div class="mt-20 flex justify-center opacity-50">
+<div class="w-[800px] h-[300px] bg-gradient-to-r from-primary/5 via-pink-500/5 to-cyan-500/5 blur-3xl rounded-full"></div>
+</div>
+</section>
+</body></html>

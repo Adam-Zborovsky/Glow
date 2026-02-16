@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Glow User Dashboard</title>
+<!-- Google Fonts: Inter & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Clash Display Mockup (Using Inter with tight tracking and bold weights for similar feel) -->
+<link href="https://fonts.cdnfonts.com/css/clash-display" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#7c3bed",
+              "background-light": "#f8fafc", /* Slate-50 as requested */
+              "background-dark": "#171121",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"],
+              "clash": ["Clash Display", "sans-serif"],
+              "mono": ["JetBrains Mono", "monospace"],
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .clash-font {
+            font-family: 'Clash Display', sans-serif;
+        }
+        .glass-nav {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        .pulse-emerald {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 selection:bg-primary/20">
+<!-- Top Navigation -->
+<nav class="sticky top-0 z-50 h-[64px] bg-white border-b border-[#E2E8F0] px-6">
+<div class="max-w-[1080px] mx-auto h-full flex items-center justify-between">
+<!-- Left: Logo -->
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-clash font-extrabold text-xl">g</div>
+<span class="clash-font font-extrabold text-[20px] tracking-tight">glow</span>
+</div>
+<!-- Center: Links -->
+<div class="hidden md:flex items-center gap-8">
+<a class="text-primary font-medium border-b-2 border-primary py-[20px] px-1" href="#">Pages</a>
+<a class="text-slate-500 hover:text-slate-900 font-medium transition-colors" href="#">Analytics</a>
+<a class="text-slate-500 hover:text-slate-900 font-medium transition-colors" href="#">Settings</a>
+</div>
+<!-- Right: Actions -->
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+<svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</span>
+<input class="bg-[#F1F5F9] border-none rounded-lg py-2 pl-10 pr-4 text-sm w-48 focus:ring-2 focus:ring-primary/20 transition-all outline-none" placeholder="Search pages..." type="text"/>
+</div>
+<button class="text-slate-500 hover:text-slate-900 relative">
+<svg fill="none" height="20" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+</button>
+<img alt="User Profile" class="w-8 h-8 rounded-full border border-slate-200" data-alt="Professional portrait of a female user smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsYF22Y30PKTGkq8tLeBCh0j_W-bd75o8NHBCM3BVc2R-Nu90Zhb7nrc1y-5Bt-HyMwbJDuP2_3hM5NC3YwRQG4KJ2uOl_OPjwIASdwniPLzxAb2-0LPuqFKzZpZYnWW5uO7VJEHkXAWPCS_80iJ1O8mGeVc8VnWLoPlhsa-xuQMVy6Fop8WxY2C12BXrP8ZDwUXdDjSSgOs76u6hH_pOUO-stc05KH05MdqVc06Ly2mZk13stDSH17hzMfKbDrOi5IACF_xP88g"/>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="max-w-[1080px] mx-auto pt-12 pb-24 px-6">
+<!-- Welcome Section -->
+<section class="mb-10">
+<h1 class="clash-font text-[32px] font-bold text-slate-900 mb-2">Good morning, Sarah</h1>
+<div class="flex items-center gap-2 text-primary font-mono text-[14px] font-medium group cursor-pointer">
+<span>glow.page/sarahchen</span>
+<button class="p-1 hover:bg-primary/10 rounded transition-colors" title="Copy link">
+<svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</section>
+<!-- Stats Grid -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+<!-- Card 1 -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="text-slate-500 text-sm font-medium mb-3">Page Views</div>
+<div class="flex items-end justify-between">
+<div class="font-mono text-2xl font-bold text-slate-900">1,247</div>
+<div class="text-emerald-500 text-xs font-bold mb-1 flex items-center gap-0.5">
+<svg fill="none" height="12" stroke="currentColor" stroke-width="3" viewbox="0 0 24 24" width="12" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+                        +12%
+                    </div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="text-slate-500 text-sm font-medium mb-3">Link Clicks</div>
+<div class="flex items-end justify-between">
+<div class="font-mono text-2xl font-bold text-slate-900">384</div>
+<div class="text-emerald-500 text-xs font-bold mb-1 flex items-center gap-0.5">
+<svg fill="none" height="12" stroke="currentColor" stroke-width="3" viewbox="0 0 24 24" width="12" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+                        +5.2%
+                    </div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="text-slate-500 text-sm font-medium mb-3">Click Rate</div>
+<div class="flex items-end justify-between">
+<div class="font-mono text-2xl font-bold text-slate-900">30.8%</div>
+<div class="text-emerald-500 text-xs font-bold mb-1 flex items-center gap-0.5">
+<svg fill="none" height="12" stroke="currentColor" stroke-width="3" viewbox="0 0 24 24" width="12" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+                        +2.4%
+                    </div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="text-slate-500 text-sm font-medium mb-3">New Subscribers</div>
+<div class="flex items-end justify-between">
+<div class="font-mono text-2xl font-bold text-slate-900">12</div>
+<div class="text-emerald-500 text-xs font-bold mb-1 flex items-center gap-0.5">
+<svg fill="none" height="12" stroke="currentColor" stroke-width="3" viewbox="0 0 24 24" width="12" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 15l7-7 7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+                        +1%
+                    </div>
+</div>
+</div>
+</section>
+<!-- Pages Section -->
+<section>
+<div class="flex items-center justify-between mb-8">
+<h2 class="clash-font text-[20px] font-semibold text-slate-900">Your Pages</h2>
+<button class="bg-gradient-to-r from-[#7C3AED] to-[#EC4899] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 font-medium shadow-lg shadow-primary/20 hover:shadow-xl transition-all active:scale-95">
+<svg fill="none" height="18" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>Create New Page</span>
+</button>
+</div>
+<!-- Page Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Page Card 1 -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg overflow-hidden flex flex-col shadow-sm group hover:border-primary/30 transition-all">
+<!-- Preview Area -->
+<div class="h-[220px] bg-slate-100 overflow-hidden relative">
+<img alt="Page Preview" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Abstract colorful gradient with clean geometric shapes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDbRrUbtuxSM7aRqIPXqzMy8AWHgN0pEHHDuNSehjnWgRFYVVhApbz-mLFKEXioIn79H-JNz02xR6Atx8ulfkcu1iz00A8PnD9qFMe6ngEBNQOi1hkbR7not-cNNknNJ4Ss8tYT7x5eKODLkk18n2hATWi-iigEhnAA1_Y87shf5wD-Wpy0vN9HKOGE0Q7ygtBLfJ-AuP0HHPeMbSgppl0fkasZcyg3RuthYwjs5KYpTWZRDWvVlEKtibLJwzlHZQVe5mRsFIg0w"/>
+<div class="absolute inset-0 bg-black/5"></div>
+</div>
+<!-- Info Area -->
+<div class="p-4 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<h3 class="clash-font font-semibold text-slate-900">Main Bio</h3>
+<div class="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 rounded-full">
+<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full pulse-emerald"></span>
+<span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Live</span>
+</div>
+</div>
+<button class="text-slate-400 hover:text-slate-600">
+<svg fill="none" height="20" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<p class="font-mono text-xs text-slate-400">glow.page/sarahchen</p>
+<div class="flex items-center justify-between pt-2">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1 text-slate-500">
+<svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-xs font-mono">1.2k</span>
+</div>
+<div class="flex items-center gap-1 text-slate-500">
+<svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M10.172 13.828a4 4 0 015.656 0l4 4a4 4 0 01-5.656 5.656l-1.102-1.101" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-xs font-mono">384</span>
+</div>
+</div>
+<button class="px-4 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-medium hover:bg-slate-800 transition-colors">Edit Page</button>
+</div>
+</div>
+</div>
+<!-- Empty State Card -->
+<div class="border-2 border-dashed border-[#E2E8F0] rounded-lg h-full flex flex-col items-center justify-center p-8 group cursor-pointer hover:border-primary/50 transition-colors bg-white/50">
+<div class="w-12 h-12 bg-slate-50 border border-slate-100 rounded-full flex items-center justify-center text-slate-400 group-hover:text-primary group-hover:bg-primary/5 transition-colors mb-4">
+<svg fill="none" height="24" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<p class="clash-font font-semibold text-slate-900">Create New Page</p>
+<p class="text-slate-400 text-xs mt-1 text-center">Set up a portfolio, link-in-bio, or project landing page.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer for context -->
+<footer class="max-w-[1080px] mx-auto px-6 py-8 border-t border-[#E2E8F0]">
+<div class="flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-4 text-xs font-medium text-slate-400">
+<a class="hover:text-primary" href="#">Docs</a>
+<a class="hover:text-primary" href="#">Community</a>
+<a class="hover:text-primary" href="#">Support</a>
+<a class="hover:text-primary" href="#">Privacy</a>
+</div>
+<div class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">
+                © Glow Platform 2024 • Version 2.0.4-stable
+            </div>
+</div>
+</footer>
+</body></html>

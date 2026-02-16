@@ -1,0 +1,108 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Bell, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { signOut } from "next-auth/react";
+
+export function DashboardNav() {
+  const pathname = usePathname();
+
+  const navLinks = [
+    { name: "Pages", href: "/dashboard" },
+    { name: "Analytics", href: "/analytics" },
+    { name: "Settings", href: "/settings" },
+  ];
+
+  return (
+    <nav className="sticky top-0 z-50 h-16 bg-white border-b border-slate-200 px-6">
+      <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
+        {/* Left: Logo */}
+        <div className="flex items-center gap-2">
+          <Link href="/dashboard" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl transition-transform group-hover:scale-105">
+              g
+            </div>
+            <span className="font-extrabold text-xl tracking-tight text-slate-900">glow</span>
+          </Link>
+        </div>
+
+        {/* Center: Links */}
+        <div className="hidden md:flex items-center gap-8">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href || (link.href !== "/dashboard" && pathname.startsWith(link.href));
+            return (
+              <Link
+                key={link.name}
+                href={link.href}
+                className={cn(
+                  "text-sm font-medium transition-all relative py-5",
+                  isActive 
+                    ? "text-primary after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary" 
+                    : "text-slate-500 hover:text-slate-900"
+                )}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Right: Actions */}
+        <div className="flex items-center gap-4">
+          <div className="relative hidden sm:block">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <Input 
+              className="bg-slate-100 border-none rounded-lg py-2 pl-10 pr-4 text-sm w-48 focus-visible:ring-2 focus-visible:ring-primary/20 transition-all outline-none h-9" 
+              placeholder="Search pages..." 
+            />
+          </div>
+          
+          <button className="text-slate-500 hover:text-slate-900 relative p-2 rounded-full hover:bg-slate-100 transition-colors">
+            <Bell className="w-5 h-5" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+          </button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="outline-none">
+                <Avatar className="w-8 h-8 border border-slate-200 hover:opacity-80 transition-opacity">
+                  <AvatarImage src="https://i.pravatar.cc/150?u=sarah" />
+                  <AvatarFallback>SC</AvatarFallback>
+                </Avatar>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 mt-2">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/settings">Settings</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/settings/billing">Billing</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className="text-red-600 cursor-pointer"
+                onClick={() => signOut({ callbackUrl: "/" })}
+              >
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    </nav>
+  );
+}

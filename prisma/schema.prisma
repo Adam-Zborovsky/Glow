@@ -1,0 +1,184 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ═══════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  passwordHash  String?
+  name          String?
+  username      String    @unique     // glow.page/{username}
+  avatarUrl     String?
+  plan          Plan      @default(FREE)
+  stripeCustomerId  String?   @unique
+  stripeSubId       String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  pages         Page[]
+  pageViews     PageView[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// ═══════════════════════════════════════
+// PAGES
+// ═══════════════════════════════════════
+
+model Page {
+  id          String   @id @default(cuid())
+  userId      String
+  slug        String   @default("main")  // for multi-page support
+  title       String   @default("My Page")
+  published   Boolean  @default(false)
+  themeId     String   @default("spotlight")
+  customTheme Json?    // custom colors, fonts, bg overrides
+  seoTitle    String?
+  seoDesc     String?
+  ogImageUrl  String?
+  favicon     String?
+  customDomain String?  @unique
+  domainVerified Boolean @default(false)
+  customCss   String?  @db.Text
+  gaId        String?  // Google Analytics ID
+  fbPixelId   String?  // Facebook Pixel ID
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blocks Block[]
+  views  PageView[]
+
+  @@unique([userId, slug])
+  @@map("pages")
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  pageId    String
+  type      BlockType
+  content   Json     // block-specific data (varies by type)
+  sortOrder Int
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  page  Page  @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  clicks BlockClick[]
+
+  @@index([pageId, sortOrder])
+  @@map("blocks")
+}
+
+// ═══════════════════════════════════════
+// ANALYTICS
+// ═══════════════════════════════════════
+
+model PageView {
+  id        String   @id @default(cuid())
+  pageId    String
+  userId    String   // page owner
+  referrer  String?
+  country   String?
+  device    Device?
+  browser   String?
+  timestamp DateTime @default(now())
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([pageId, timestamp])
+  @@index([userId, timestamp])
+  @@map("page_views")
+}
+
+model BlockClick {
+  id        String   @id @default(cuid())
+  blockId   String
+  url       String?
+  referrer  String?
+  country   String?
+  device    Device?
+  timestamp DateTime @default(now())
+
+  block Block @relation(fields: [blockId], references: [id], onDelete: Cascade)
+
+  @@index([blockId, timestamp])
+  @@map("block_clicks")
+}
+
+// ═══════════════════════════════════════
+// ENUMS
+// ═══════════════════════════════════════
+
+enum Plan {
+  FREE
+  PRO
+}
+
+enum BlockType {
+  LINK_BUTTON
+  LINK_CARD
+  BIO
+  SOCIAL_ICONS
+  IMAGE
+  IMAGE_GRID
+  VIDEO_EMBED
+  MUSIC_EMBED
+  HEADER
+  TEXT_BLOCK
+  NEWSLETTER
+  CONTACT_FORM
+  TESTIMONIAL
+  MAP
+  COUNTDOWN
+  FILE_DOWNLOAD
+  CUSTOM_HTML
+}
+
+enum Device {
+  MOBILE
+  DESKTOP
+  TABLET
+}

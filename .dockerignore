@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.env
+.env.local
+README.md
+Dockerfile
+docker-compose.yaml
+assets
+prisma/migrations
+npm-debug.log
