@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   AlignLeft, 
   AlignCenter, 
@@ -41,11 +42,26 @@ export function SettingsPanel() {
 
   return (
     <aside className="w-[360px] border-l border-slate-200 bg-white flex flex-col h-full">
-      <div className="p-6 border-b border-slate-100">
-        <h3 className="text-lg font-bold tracking-tight">Block Settings</h3>
-        <p className="text-sm text-slate-400 mt-1 uppercase tracking-widest font-bold text-[10px]">
-          {selectedBlock.type.replace('-', ' ')}
-        </p>
+      <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-bold tracking-tight">Block Settings</h3>
+          <p className="text-sm text-slate-400 mt-1 uppercase tracking-widest font-bold text-[10px]">
+            {selectedBlock.type.replace('-', ' ')}
+          </p>
+        </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => removeBlock(selectedBlock.id)}
+              className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Delete Block</TooltipContent>
+        </Tooltip>
       </div>
 
       <ScrollArea className="flex-1">

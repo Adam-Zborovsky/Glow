@@ -2,13 +2,13 @@
 
 import { useEditorStore, Block, BlockType } from "@/stores/editor-store";
 import { cn } from "@/lib/utils";
-import { Plus, Edit2, Instagram, Youtube, Twitter, Linkedin, Github, Type, Image as ImageIcon, Video, Music, Heading } from "lucide-react";
+import { Plus, Edit2, Trash2, Instagram, Youtube, Twitter, Linkedin, Github, Type, Image as ImageIcon, Video, Music, Heading } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Box } from "lucide-react";
 
 export function EditorCanvas() {
-  const { blocks, selectedBlockId, setSelectedBlockId, themeId, deviceView, is3dView, setIs3dView, addBlock } = useEditorStore();
+  const { blocks, selectedBlockId, setSelectedBlockId, themeId, deviceView, is3dView, setIs3dView, addBlock, removeBlock } = useEditorStore();
 
   const handleAddBlock = (e: React.MouseEvent, type: BlockType, index?: number) => {
     e.stopPropagation();
@@ -73,8 +73,24 @@ export function EditorCanvas() {
                 <RenderBlock block={block} isSelected={selectedBlockId === block.id} themeId={themeId} />
                 
                 {selectedBlockId === block.id && (
-                  <div className="absolute -top-3 -right-3 bg-primary text-white p-1.5 rounded-full shadow-lg z-10 scale-100 animate-in zoom-in-50 duration-200">
-                    <Edit2 className="w-3 h-3" />
+                  <div className="absolute -top-3 -right-3 flex gap-1.5 z-10 scale-100 animate-in zoom-in-50 duration-200">
+                    <div className="bg-primary text-white p-1.5 rounded-full shadow-lg">
+                      <Edit2 className="w-3 h-3" />
+                    </div>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeBlock(block.id);
+                          }}
+                          className="bg-red-500 text-white p-1.5 rounded-full shadow-lg hover:bg-red-600 transition-colors"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>Delete Block</TooltipContent>
+                    </Tooltip>
                   </div>
                 )}
 
