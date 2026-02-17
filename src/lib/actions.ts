@@ -29,7 +29,7 @@ export async function uploadFile(formData: FormData) {
   });
 
   if (!validation.success) {
-    return { error: validation.error.errors[0].message };
+    return { error: validation.error.issues[0].message };
   }
 
   try {

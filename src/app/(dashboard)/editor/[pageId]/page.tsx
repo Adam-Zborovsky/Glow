@@ -10,9 +10,9 @@ import { notFound, useParams } from "next/navigation";
 import { HydrateEditor } from "@/components/editor/hydrate-editor";
 import { useEffect, useState } from "react";
 import { useEditorStore } from "@/stores/editor-store";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Palette, Settings, Eye, Share2, Plus } from "lucide-react";
+import { LayoutGrid, Palette, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function EditorPage() {

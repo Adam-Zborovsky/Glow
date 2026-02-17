@@ -2,17 +2,6 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-interface NavbarProps {
-  user?: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-  };
-}
-
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";

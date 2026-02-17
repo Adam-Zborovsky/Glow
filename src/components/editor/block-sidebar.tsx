@@ -9,10 +9,8 @@ import {
   Video, 
   Music, 
   Layout,
-  Palette,
   Settings,
   Share2,
-  Box,
   Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";

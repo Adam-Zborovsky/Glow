@@ -4,14 +4,10 @@ import {
   Copy, 
   Eye, 
   ExternalLink, 
-  MoreHorizontal, 
   Plus, 
   TrendingUp, 
   MousePointer2, 
   Users,
-  Edit,
-  Trash2,
-  CopyPlus,
 } from "lucide-react";
 import Link from "next/link";
 import { getPages, createPage } from "@/lib/actions";

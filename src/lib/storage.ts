@@ -17,7 +17,7 @@ export async function storeFile(file: File): Promise<string> {
   });
 
   if (!validation.success) {
-    throw new Error(validation.error.errors[0].message);
+    throw new Error(validation.error.issues[0].message);
   }
 
   // Ensure uploads directory exists

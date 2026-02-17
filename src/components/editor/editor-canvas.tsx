@@ -124,7 +124,7 @@ export function EditorCanvas() {
                 items={blocks.map((b) => b.id)}
                 strategy={verticalListSortingStrategy}
               >
-                {blocks.map((block, index) => (
+                {blocks.map((block) => (
                   <SortableBlock
                     key={block.id}
                     block={block}
