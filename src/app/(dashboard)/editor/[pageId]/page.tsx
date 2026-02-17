@@ -75,13 +75,13 @@ export default function EditorPage() {
             icon={LayoutGrid} 
             label="Blocks" 
             isActive={activeTab === 'blocks'} 
-            onClick={() => setActiveTab('blocks')} 
+            onClick={() => setActiveTab(activeTab === 'blocks' ? null : 'blocks')} 
           />
           <MobileNavButton 
             icon={Palette} 
             label="Theme" 
             isActive={activeTab === 'theme'} 
-            onClick={() => setActiveTab('theme')} 
+            onClick={() => setActiveTab(activeTab === 'theme' ? null : 'theme')} 
           />
           <MobileNavButton 
             icon={Settings} 
@@ -89,16 +89,16 @@ export default function EditorPage() {
             isActive={activeTab === 'settings' || !!selectedBlockId} 
             onClick={() => {
               if (selectedBlockId) {
-                // Keep current selection
+                setSelectedBlockId(null);
               } else {
-                setActiveTab('settings');
+                setActiveTab(activeTab === 'settings' ? null : 'settings');
               }
             }} 
           />
         </div>
 
         {/* Mobile Drawers (Sheets) */}
-        <Sheet open={activeTab !== null && (activeTab === 'blocks' || activeTab === 'theme' || activeTab === 'settings')} onOpenChange={(open) => !open && setActiveTab('blocks')}>
+        <Sheet open={activeTab !== null && (activeTab === 'blocks' || activeTab === 'theme' || activeTab === 'settings')} onOpenChange={(open) => !open && setActiveTab(null)}>
           <SheetContent side="bottom" className="h-[80vh] rounded-t-[32px] px-0 pb-0 border-none shadow-2xl overflow-hidden flex flex-col">
             <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mt-4 mb-2 shrink-0" />
             <div className="flex-1 overflow-hidden">
@@ -106,7 +106,7 @@ export default function EditorPage() {
                  <div className="h-full flex flex-col">
                     <div className="px-6 py-2 border-b border-slate-50 flex items-center justify-between">
                        <SheetTitle className="text-lg font-bold capitalize">{activeTab}</SheetTitle>
-                       <Button variant="ghost" size="sm" onClick={() => setActiveTab('blocks')} className="text-slate-400">Close</Button>
+                       <Button variant="ghost" size="sm" onClick={() => setActiveTab(null)} className="text-slate-400">Close</Button>
                     </div>
                     <div className="flex-1 overflow-y-auto custom-scrollbar">
                        <BlockSidebar hideNav />

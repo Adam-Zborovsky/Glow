@@ -75,7 +75,7 @@ export function EditorCanvas() {
   };
 
   return (
-    <main className="flex-1 bg-slate-50 flex flex-col items-center justify-center p-4 md:p-12 overflow-y-auto min-h-0 text-slate-900 relative">
+    <main className="flex-1 bg-slate-50 flex flex-col items-center justify-center p-4 md:p-12 pb-24 lg:pb-12 overflow-y-auto min-h-0 text-slate-900 relative">
       {/* 3D Toggle */}
       <div className="absolute top-6 right-6 z-20 hidden md:block">
         <Tooltip>

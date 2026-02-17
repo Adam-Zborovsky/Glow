@@ -20,7 +20,7 @@ interface EditorState {
   blocks: Block[];
   themeId: 'creator' | 'minimal' | 'dark';
   selectedBlockId: string | null;
-  activeTab: 'blocks' | 'theme' | 'settings';
+  activeTab: 'blocks' | 'theme' | 'settings' | null;
   isPreviewOpen: boolean;
   deviceView: 'mobile' | 'tablet' | 'desktop';
   is3dView: boolean;
@@ -32,7 +32,7 @@ interface EditorState {
   setBlocks: (blocks: Block[]) => void;
   setThemeId: (id: 'creator' | 'minimal' | 'dark') => void;
   setSelectedBlockId: (id: string | null) => void;
-  setActiveTab: (tab: 'blocks' | 'theme' | 'settings') => void;
+  setActiveTab: (tab: 'blocks' | 'theme' | 'settings' | null) => void;
   setIsPreviewOpen: (isOpen: boolean) => void;
   setDeviceView: (view: 'mobile' | 'tablet' | 'desktop') => void;
   setIs3dView: (is3d: boolean) => void;

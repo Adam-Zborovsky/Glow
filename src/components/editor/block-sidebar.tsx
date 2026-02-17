@@ -37,6 +37,8 @@ export function BlockSidebar({ hideNav = false }: { hideNav?: boolean }) {
   const pageId = params.pageId as string;
   const [isSaving, setIsSaving] = useState(false);
 
+  const effectiveTab = activeTab || 'blocks';
+
   const handleSaveSettings = async () => {
     setIsSaving(true);
     try {
@@ -65,7 +67,7 @@ export function BlockSidebar({ hideNav = false }: { hideNav?: boolean }) {
             onClick={() => setActiveTab('blocks')}
             className={cn(
               "flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2",
-              activeTab === 'blocks' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
+              effectiveTab === 'blocks' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
             )}
           >
             Blocks
@@ -74,7 +76,7 @@ export function BlockSidebar({ hideNav = false }: { hideNav?: boolean }) {
             onClick={() => setActiveTab('theme')}
             className={cn(
               "flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2",
-              activeTab === 'theme' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
+              effectiveTab === 'theme' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
             )}
           >
             Theme
@@ -83,7 +85,7 @@ export function BlockSidebar({ hideNav = false }: { hideNav?: boolean }) {
             onClick={() => setActiveTab('settings')}
             className={cn(
               "flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2",
-              activeTab === 'settings' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
+              effectiveTab === 'settings' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
             )}
           >
             Settings
@@ -92,7 +94,7 @@ export function BlockSidebar({ hideNav = false }: { hideNav?: boolean }) {
       )}
 
       <ScrollArea className="flex-1 px-6 pt-6">
-        {activeTab === 'blocks' && (
+        {effectiveTab === 'blocks' && (
           <div className="space-y-2 pb-6">
             {availableBlocks.map((block) => {
               const count = blocks.filter(b => b.type === block.type).length;
@@ -126,7 +128,7 @@ export function BlockSidebar({ hideNav = false }: { hideNav?: boolean }) {
           </div>
         )}
 
-        {activeTab === 'theme' && (
+        {effectiveTab === 'theme' && (
           <div className="space-y-6 pb-6">
             <div className="space-y-3">
               <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Select Template</h4>
@@ -154,7 +156,7 @@ export function BlockSidebar({ hideNav = false }: { hideNav?: boolean }) {
           </div>
         )}
 
-        {activeTab === 'settings' && (
+        {effectiveTab === 'settings' && (
           <div className="space-y-6 pb-6">
             <div className="space-y-4">
               <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Page Settings</h4>
@@ -209,7 +211,7 @@ export function BlockSidebar({ hideNav = false }: { hideNav?: boolean }) {
           onClick={() => setActiveTab('settings')}
           className={cn(
             "w-full flex items-center gap-3 p-2 rounded-lg transition-all",
-            activeTab === 'settings' ? "bg-primary/5 text-primary" : "text-slate-500 hover:bg-slate-50"
+            effectiveTab === 'settings' ? "bg-primary/5 text-primary" : "text-slate-500 hover:bg-slate-50"
           )}
         >
           <Settings className="w-4 h-4" />
