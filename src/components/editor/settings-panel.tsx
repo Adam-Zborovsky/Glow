@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { ImageUpload } from "./image-upload";
 
 const socialPlatforms = [
   { id: 'instagram', label: 'Instagram', icon: Instagram, placeholder: 'https://instagram.com/username' },
@@ -36,19 +37,19 @@ export function SettingsPanel() {
 
   if (!selectedBlock) {
     return (
-      <aside className="w-[360px] border-l border-slate-200 bg-white flex flex-col items-center justify-center p-8 text-center">
+      <div className="flex flex-col items-center justify-center p-8 text-center h-full">
         <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mb-4">
           <Settings className="w-6 h-6 text-slate-300" />
         </div>
         <h3 className="font-bold text-slate-900">No block selected</h3>
-        <p className="text-sm text-slate-400 mt-1">Select a block on the canvas to customize its settings.</p>
-      </aside>
+        <p className="text-sm text-slate-400 mt-1 uppercase tracking-widest font-bold text-[10px]">Select a block on the canvas to customize its settings.</p>
+      </div>
     );
   }
 
   return (
-    <aside className="w-[360px] border-l border-slate-200 bg-white flex flex-col h-full">
-      <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+    <div className="flex flex-col h-full bg-white lg:w-[360px] lg:border-l border-slate-200">
+      <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
         <div>
           <h3 className="text-lg font-bold tracking-tight">Block Settings</h3>
           <p className="text-sm text-slate-400 mt-1 uppercase tracking-widest font-bold text-[10px]">
@@ -101,9 +102,9 @@ export function SettingsPanel() {
             <>
               <div className="space-y-4">
                 <Label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Profile Picture</Label>
-                <div className="flex items-center gap-6">
+                <div className="flex items-start gap-6">
                   <div 
-                    className="w-20 h-20 rounded-full bg-slate-100 border-2 border-slate-200 overflow-hidden relative group"
+                    className="w-20 h-20 rounded-full bg-slate-100 border-2 border-slate-200 overflow-hidden relative shrink-0"
                   >
                     <img 
                       src={selectedBlock.content.photoUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"} 
@@ -111,15 +112,20 @@ export function SettingsPanel() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="space-y-2 flex-1">
-                    <Label className="text-xs font-bold text-slate-700">Image URL</Label>
-                    <Input 
+                  <div className="space-y-4 flex-1">
+                    <ImageUpload 
                       value={selectedBlock.content.photoUrl || ''} 
-                      onChange={(e) => updateBlockContent(selectedBlock.id, { photoUrl: e.target.value })}
-                      placeholder="https://..."
-                      className="h-10 bg-slate-50 border-slate-200 text-sm"
+                      onChange={(url) => updateBlockContent(selectedBlock.id, { photoUrl: url })}
                     />
-                    <p className="text-[10px] text-slate-400 font-medium">Paste a direct link to an image (JPG, PNG)</p>
+                    <div className="space-y-2 pt-2 border-t border-slate-100">
+                      <Label className="text-xs font-bold text-slate-700">Or use Image URL</Label>
+                      <Input 
+                        value={selectedBlock.content.photoUrl || ''} 
+                        onChange={(e) => updateBlockContent(selectedBlock.id, { photoUrl: e.target.value })}
+                        placeholder="https://..."
+                        className="h-10 bg-slate-50 border-slate-200 text-sm"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -242,15 +248,20 @@ export function SettingsPanel() {
                     </div>
                   )}
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-bold text-slate-700">Image URL</Label>
-                  <Input 
+                <div className="space-y-4">
+                  <ImageUpload 
                     value={selectedBlock.content.url || ''} 
-                    onChange={(e) => updateBlockContent(selectedBlock.id, { url: e.target.value })}
-                    placeholder="https://..."
-                    className="h-10 bg-slate-50 border-slate-200 text-sm"
+                    onChange={(url) => updateBlockContent(selectedBlock.id, { url })}
                   />
-                  <p className="text-[10px] text-slate-400 font-medium">Paste a direct link to an image</p>
+                  <div className="space-y-2 pt-2 border-t border-slate-100">
+                    <Label className="text-xs font-bold text-slate-700">Or use Image URL</Label>
+                    <Input 
+                      value={selectedBlock.content.url || ''} 
+                      onChange={(e) => updateBlockContent(selectedBlock.id, { url: e.target.value })}
+                      placeholder="https://..."
+                      className="h-10 bg-slate-50 border-slate-200 text-sm"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -296,7 +307,7 @@ export function SettingsPanel() {
           Delete Block
         </Button>
       </div>
-    </aside>
+    </div>
   );
 }
 

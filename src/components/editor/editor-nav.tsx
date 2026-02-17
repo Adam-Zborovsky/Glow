@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Smartphone, Tablet, Monitor, Eye, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Smartphone, Tablet, Monitor, Eye, Save, Loader2, Share2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useEditorStore } from "@/stores/editor-store";
 import { saveBlocks, publishPage } from "@/lib/actions";
@@ -59,29 +59,29 @@ export function EditorNav({ initialPublished = false }: { initialPublished?: boo
   };
 
   return (
-    <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 z-50">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
+    <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-4 md:px-6 z-50">
+      <div className="flex items-center gap-2 md:gap-4">
+        <Button variant="ghost" size="icon" asChild className="h-8 w-8 md:h-10 md:w-10">
           <Link href="/dashboard">
             <ArrowLeft className="w-5 h-5 text-slate-500" />
           </Link>
         </Button>
         <div className="flex flex-col">
-          <h1 className="font-bold text-sm tracking-tight leading-none">Main Bio</h1>
+          <h1 className="font-bold text-xs md:text-sm tracking-tight leading-none truncate max-w-[80px] md:max-w-none">Main Bio</h1>
           <div className="flex items-center gap-1.5 mt-1">
             {isSaving || isPublishing ? (
               <span className="text-[10px] text-slate-400 flex items-center gap-1">
                 <Loader2 className="w-2.5 h-2.5 animate-spin" />
-                {isSaving ? "Saving..." : "Publishing..."}
+                <span className="hidden xs:inline">{isSaving ? "Saving..." : "Publishing..."}</span>
               </span>
             ) : (
-              <span className="text-[10px] text-emerald-500 font-medium">All changes saved</span>
+              <span className="text-[10px] text-emerald-500 font-medium hidden xs:inline">All changes saved</span>
             )}
           </div>
         </div>
       </div>
 
-      <div className="flex items-center bg-slate-100 p-1 rounded-lg">
+      <div className="hidden sm:flex items-center bg-slate-100 p-1 rounded-lg">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button 
@@ -125,37 +125,38 @@ export function EditorNav({ initialPublished = false }: { initialPublished?: boo
         </Tooltip>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5 md:gap-3">
         <Button 
           variant="outline" 
           size="sm" 
-          className="gap-2 h-9"
+          className="gap-2 h-8 md:h-9 px-2 md:px-3"
           onClick={handleSave}
           disabled={isSaving || isPublishing}
         >
           {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          Save
+          <span className="hidden sm:inline">Save</span>
         </Button>
         <Button 
           variant="outline" 
           size="sm" 
-          className="gap-2 h-9"
+          className="gap-2 h-8 md:h-9 px-2 md:px-3"
           onClick={() => setIsPreviewOpen(true)}
         >
           <Eye className="w-4 h-4" />
-          Preview
+          <span className="hidden sm:inline">Preview</span>
         </Button>
         <Button 
           size="sm" 
           className={cn(
-            "text-white glow-shadow border-none font-bold h-9 px-5",
+            "text-white glow-shadow border-none font-bold h-8 md:h-9 px-3 md:px-5",
             isPublished ? "bg-slate-900" : "primary-gradient"
           )}
           onClick={handlePublish}
           disabled={isPublishing}
         >
           {isPublishing && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-          {isPublished ? "Unpublish" : "Publish"}
+          <span className="hidden sm:inline">{isPublished ? "Unpublish" : "Publish"}</span>
+          <span className="sm:hidden">{isPublished ? <Share2 className="w-4 h-4" /> : "Go Live"}</span>
         </Button>
       </div>
     </header>

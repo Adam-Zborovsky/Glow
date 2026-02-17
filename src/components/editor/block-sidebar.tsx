@@ -33,7 +33,7 @@ const availableBlocks: { type: BlockType; label: string; icon: any }[] = [
   { type: 'text', label: 'Rich Text', icon: Layout },
 ];
 
-export function BlockSidebar() {
+export function BlockSidebar({ hideNav = false }: { hideNav?: boolean }) {
   const { addBlock, blocks, activeTab, setActiveTab, themeId, setThemeId, pageSettings, updatePageSettings } = useEditorStore();
   const params = useParams();
   const pageId = params.pageId as string;
@@ -57,36 +57,41 @@ export function BlockSidebar() {
   };
 
   return (
-    <aside className="w-[280px] border-r border-slate-200 bg-white flex flex-col h-full">
-      <div className="flex border-b border-slate-100">
-        <button 
-          onClick={() => setActiveTab('blocks')}
-          className={cn(
-            "flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2",
-            activeTab === 'blocks' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
-          )}
-        >
-          Blocks
-        </button>
-        <button 
-          onClick={() => setActiveTab('theme')}
-          className={cn(
-            "flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2",
-            activeTab === 'theme' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
-          )}
-        >
-          Theme
-        </button>
-        <button 
-          onClick={() => setActiveTab('settings')}
-          className={cn(
-            "flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2",
-            activeTab === 'settings' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
-          )}
-        >
-          Settings
-        </button>
-      </div>
+    <aside className={cn(
+      "border-r border-slate-200 bg-white flex flex-col h-full",
+      hideNav ? "w-full border-none" : "w-[280px]"
+    )}>
+      {!hideNav && (
+        <div className="flex border-b border-slate-100">
+          <button 
+            onClick={() => setActiveTab('blocks')}
+            className={cn(
+              "flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2",
+              activeTab === 'blocks' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
+            )}
+          >
+            Blocks
+          </button>
+          <button 
+            onClick={() => setActiveTab('theme')}
+            className={cn(
+              "flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2",
+              activeTab === 'theme' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
+            )}
+          >
+            Theme
+          </button>
+          <button 
+            onClick={() => setActiveTab('settings')}
+            className={cn(
+              "flex-1 py-4 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2",
+              activeTab === 'settings' ? "text-primary border-primary" : "text-slate-400 border-transparent hover:text-slate-600"
+            )}
+          >
+            Settings
+          </button>
+        </div>
+      )}
 
       <ScrollArea className="flex-1 px-6 pt-6">
         {activeTab === 'blocks' && (

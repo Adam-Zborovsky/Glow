@@ -31,10 +31,12 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <main className="max-w-7xl mx-auto pt-12 pb-24 px-6">
+    <main className="max-w-7xl mx-auto pt-8 md:pt-12 pb-24 px-6">
       {/* Welcome Section */}
-      <section className="mb-10">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2 tracking-tight">Good morning, {session?.user?.name?.split(' ')[0]}</h1>
+      <section className="mb-10 text-center md:text-left flex flex-col items-center md:items-start">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2 tracking-tight">
+          Good morning, {session?.user?.name?.split(' ')[0]}
+        </h1>
         <div className="flex items-center gap-2 text-primary font-mono text-sm font-medium group cursor-pointer w-fit">
           <span>glow.page/{(session?.user as any)?.username}</span>
           <button className="p-1 hover:bg-primary/10 rounded transition-colors text-slate-400 group-hover:text-primary">
@@ -44,17 +46,17 @@ export default async function DashboardPage() {
       </section>
 
       {/* Stats Grid */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
         {stats.map((stat) => (
-          <div key={stat.label} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
-            <div className="text-slate-500 text-sm font-medium mb-3 flex items-center justify-between">
-              {stat.label}
-              <stat.icon className="w-4 h-4 opacity-40" />
+          <div key={stat.label} className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="text-slate-500 text-[10px] md:text-sm font-medium mb-2 md:mb-3 flex items-center justify-between">
+              <span className="truncate">{stat.label}</span>
+              <stat.icon className="w-3.5 h-3.5 md:w-4 md:h-4 opacity-40 shrink-0" />
             </div>
-            <div className="flex items-end justify-between">
-              <div className="font-mono text-2xl font-bold text-slate-900">{stat.value}</div>
-              <div className="text-emerald-500 text-xs font-bold mb-1 flex items-center gap-0.5">
-                <TrendingUp className="w-3 h-3" />
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-1">
+              <div className="font-mono text-xl md:text-2xl font-bold text-slate-900 leading-none">{stat.value}</div>
+              <div className="text-emerald-500 text-[10px] md:text-xs font-bold flex items-center gap-0.5">
+                <TrendingUp className="w-3 h-3 shrink-0" />
                 {stat.trend}
               </div>
             </div>
@@ -65,11 +67,11 @@ export default async function DashboardPage() {
       {/* Pages Section */}
       <section>
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-xl font-bold text-slate-900 tracking-tight">Your Pages</h2>
+          <h2 className="text-lg md:text-xl font-bold text-slate-900 tracking-tight">Your Pages</h2>
           <form action={createPage}>
-            <Button type="submit" className="primary-gradient text-white px-5 py-2.5 rounded-lg flex items-center gap-2 font-semibold shadow-lg shadow-primary/20 hover:shadow-xl transition-all active:scale-95 border-none h-auto">
+            <Button type="submit" className="primary-gradient text-white px-3 md:px-5 py-2 md:py-2.5 rounded-lg flex items-center gap-2 font-semibold shadow-lg shadow-primary/20 hover:shadow-xl transition-all active:scale-95 border-none h-auto">
               <Plus className="w-5 h-5" />
-              <span>Create New Page</span>
+              <span className="text-xs md:text-sm">New Page</span>
             </Button>
           </form>
         </div>

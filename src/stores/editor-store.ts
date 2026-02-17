@@ -41,6 +41,7 @@ interface EditorState {
   addBlock: (type: BlockType, index?: number) => void;
   removeBlock: (id: string) => void;
   updateBlockContent: (id: string, content: any) => void;
+  reorderBlocks: (oldIndex: number, newIndex: number) => void;
 }
 
 export const useEditorStore = create<EditorState>((set) => ({
@@ -108,4 +109,10 @@ export const useEditorStore = create<EditorState>((set) => ({
   updateBlockContent: (id, content) => set((state) => ({
     blocks: state.blocks.map((b) => b.id === id ? { ...b, content: { ...b.content, ...content } } : b)
   })),
+  reorderBlocks: (oldIndex, newIndex) => set((state) => {
+    const newBlocks = [...state.blocks];
+    const [movedBlock] = newBlocks.splice(oldIndex, 1);
+    newBlocks.splice(newIndex, 0, movedBlock);
+    return { blocks: newBlocks };
+  }),
 }));

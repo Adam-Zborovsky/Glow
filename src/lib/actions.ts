@@ -6,13 +6,77 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import bcrypt from "bcryptjs";
-import { saveBlocksSchema, updatePageMetadataSchema } from "./validation";
+import { saveBlocksSchema, updatePageMetadataSchema, fileSchema } from "./validation";
 import { rateLimit } from "./rate-limit";
 import { logger } from "./logger";
+import { storeFile } from "./storage";
 
 // ═══════════════════════════════════════
 // AUTH ACTIONS
 // ═══════════════════════════════════════
+
+export async function uploadFile(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Unauthorized");
+
+  const file = formData.get("file") as File;
+  if (!file) throw new Error("No file provided");
+
+  // Validate file
+  const validation = fileSchema.safeParse({
+    size: file.size,
+    type: file.type,
+  });
+
+  if (!validation.success) {
+    return { error: validation.error.errors[0].message };
+  }
+
+  try {
+    const url = await storeFile(file);
+    return { url };
+  } catch (error: any) {
+    logger.error("Upload error:", error);
+    return { error: error.message || "Something went wrong during upload" };
+  }
+}
+
+export async function updateProfile(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Unauthorized" };
+
+  const name = formData.get("name") as string;
+  const username = formData.get("username") as string;
+  const avatarUrl = formData.get("avatarUrl") as string;
+
+  try {
+    // Check if username is taken (if it's changing)
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        username,
+        NOT: { id: session.user.id }
+      }
+    });
+
+    if (existingUser) return { error: "Username is already taken" };
+
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { 
+        name, 
+        username,
+        avatarUrl: avatarUrl || undefined
+      }
+    });
+
+    revalidatePath("/settings");
+    revalidatePath("/dashboard");
+    return { success: true };
+  } catch (error) {
+    logger.error("Update profile error:", error);
+    return { error: "Failed to update profile" };
+  }
+}
 
 export async function register(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;

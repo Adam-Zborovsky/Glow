@@ -48,3 +48,11 @@ export const updatePageMetadataSchema = z.object({
   seoTitle: z.string().optional(),
   seoDesc: z.string().optional(),
 });
+
+export const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+export const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+export const fileSchema = z.object({
+  size: z.number().max(MAX_FILE_SIZE, "File size must be less than 2MB"),
+  type: z.string().refine((type) => ACCEPTED_IMAGE_TYPES.includes(type), "Only .jpg, .jpeg, .png and .webp formats are supported"),
+});
