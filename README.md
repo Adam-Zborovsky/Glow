@@ -6,6 +6,8 @@ Glow is a personal page builder. Sign up, pick a template, add your links and co
 
 Think Linktree, but actually beautiful, more powerful, and with a free tier that doesn't feel crippled.
 
+## Live On: https://glow.adamzborovsky.com
+
 ## Why Glow?
 
 | Linktree Problem | Glow Solution |
