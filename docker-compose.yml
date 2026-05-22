@@ -25,13 +25,13 @@ services:
       - glow-db
     networks:
       - glow
-      - adam
+      - adam-cloud
     restart: unless-stopped
 
 networks:
   glow:
     name: glow
-  adam:
+  adam-cloud:
     external: true
 
 volumes:
