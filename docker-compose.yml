@@ -4,7 +4,7 @@ services:
     container_name: glow-db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Az01000001
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: glow
     volumes:
       - glow_db_data:/var/lib/postgresql/data
@@ -20,19 +20,16 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: "postgresql://postgres:Az01000001@glow-db:5432/glow?schema=public"
+      DATABASE_URL: "postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@glow-db:5432/glow?schema=public"
     depends_on:
       - glow-db
     networks:
       - glow
-      - adam-cloud
     restart: unless-stopped
 
 networks:
   glow:
     name: glow
-  adam-cloud:
-    external: true
 
 volumes:
   glow_db_data:
